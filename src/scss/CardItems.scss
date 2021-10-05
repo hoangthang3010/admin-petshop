@@ -1,0 +1,44 @@
+.carditem{
+    position: relative;
+
+    &__sale{
+        position: absolute;
+        right: -5px;
+        background-color: red;
+        opacity: 0.8;
+
+        // float: right;
+
+        &--text {
+            color: white;
+            font-size: 15px;
+            padding: 3px 8px;
+            position: relative;
+
+            &::after {
+                position: absolute;
+                content: "";
+                top: 100%;
+                right: 0;
+                border-top: 0px solid transparent;
+                border-bottom: 4px solid transparent;
+                border-left: 5px solid #a90000;
+            }
+        }
+
+    }
+    &__price{
+        display: flex;
+        justify-content: center;
+        padding: 5px;
+    }
+    &__addtocard{
+        cursor: pointer;
+        color: white;
+        padding: 5px 8px;
+        background-color: orange;
+        &:hover{
+            background-color: rgb(219, 151, 23);
+        }
+    }
+}

@@ -1,0 +1,144 @@
+.header{
+    width: 100%;
+    position: relative;
+    // z-index: 100;
+    background-color: white;
+    &__top{
+        // width: 100%;
+        z-index: 99;
+        align-items: center;
+        display: flex;
+        &__left{
+            // align-items: center;
+            padding: 5px;
+            &__image{
+                margin-left: 50px;
+                max-height: 90px;
+            }
+        }
+        &__mid{
+            align-items: center;
+            display: flex;
+            &__search{
+                align-items: center;
+                &__item{
+                    border-radius: 4px;
+                    height: 40px;
+                    width: 100%;
+                    border: 1px solid rgb(189, 189, 189);
+                }
+            }
+            &__clientcare{
+                display: flex;
+                align-items: center;
+                &__icon{
+                    padding: 8px;
+                    border-radius: 50px;
+                    border: 2px solid orange;
+                }
+                &__title{
+                    align-items: center;
+                    font-weight: 600;
+                    color: #FFA500;
+                    font-size: 15px;
+                    padding: 0px;
+                }
+            }
+        }
+        &__right{
+            align-items: center;
+            display: flex;
+            // a{
+            //     text-decoration: none;
+            //     color: black;
+            // }
+            &__cart{
+                position: relative;
+                // border-right: 1px solid black;
+                padding: 5px 10px !important;
+                // text-align: end;
+                align-items: center;
+                flex: end;
+                display: flex;
+                &__icon{
+                    font-size: 30px;
+                }
+                &__title{
+                    // margin: auto; 
+                    margin-left: 5px;
+                    font-size: 13px;
+                }
+                &::after{
+                    position: absolute;
+                    content: "";
+                    top: 20%;
+                    right: 0;
+                    // right: 3px;
+                   width: 1px;
+                   background-color: rgb(189, 189, 189); 
+                   height: 60%;
+                }
+            }
+            &__login{
+                padding: 5px 10px !important;
+                display: flex;
+                align-items: center;
+                &__title{
+                    // margin: auto;
+                    margin-left: 5px;
+                    font-size: 13px;
+                }
+            }
+        }
+    } 
+    &__bottom{
+        // position: fixed;
+        position: -webkit-sticky;
+        position: sticky;
+        top: 0px;
+        display: flex;
+        z-index: 98;
+        height: 50px;
+        background-color: orange;
+        &__menu{
+            background-color: orange;
+            align-items: center;
+            display: flex;
+            margin: auto;
+            width: 80%;
+            text-align: center;
+            &__ul{
+                justify-content: center;
+                margin: auto;
+                display: flex;
+                // margin: 0px 150px;
+                // background-color: orange;
+                &__li{
+                    cursor: pointer;
+                    background-color: orange;
+                    padding: 16px 20px;
+                    color: white;
+                    font-weight: 600;
+                    &:hover{
+                        background-color: #e49502;
+                    }
+                }
+            }
+            &__cart{
+                &__title{
+                    background-color: orange;
+                    color: white;
+                }
+            }
+        }
+        // position: -webkit-sticky;
+        // position: sticky;
+        // top: 0;
+        // position: relative;
+        // animation: move 3s;
+    }
+    // @keyframes move {
+    //     from { top: 0}
+    //     to   { top: 200px}
+    // }
+}

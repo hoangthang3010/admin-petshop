@@ -1,0 +1,134 @@
+.userlogin{
+    padding-top: 20px;
+    margin: auto;
+    width: 100%;
+    min-height: 450px;
+    background-color: #fafafa;
+    &__box{
+        padding: 20px;
+        width: 30%;
+        background-color: white;
+        margin: auto;
+        border: 1px solid rgb(223, 223, 223);
+        &__title{
+            font-weight: 600;
+        }
+        &__main{
+            &__title{
+                font-weight: 600;
+                margin-bottom: 0px;
+            }
+            &--input{
+                border: 1px solid rgb(186, 186, 186);
+                width: 100%;
+                margin-bottom: 10px;
+                padding: 10px;
+                border-radius: 2px;
+            }
+        }
+        &__memo{
+            margin-bottom: 10px;
+            &--checkbox{
+                margin-right: 5px;
+            }
+            &__title{
+                font-weight: 600;
+            }
+        }
+        &__login{
+            &--sign_in{
+                padding: 5px 10px;
+                border: none;
+                background-color: rgb(0, 158, 0);
+                color: white;
+                font-weight: 600;
+                margin-bottom: 10px;
+                &:hover{
+                    background-color: green;
+                }
+            }
+            &--sign_up{
+                margin-left: 5px;
+                padding: 5px 10px;
+                border: none;
+                background-color: orange;
+                color: white;
+                font-weight: 600;
+                margin-bottom: 10px;
+                &:hover{
+                    background-color: rgb(220, 143, 1);
+                }
+            }
+            &__forget{
+                cursor: pointer;
+                // font-weight: 600;
+                color: orange;
+                &:hover{
+                    color: rgb(214, 139, 0);
+                }
+            }
+        }
+        &__or{
+            width: 100%;
+            display: flex;
+            text-align: center;
+            padding: 15px 0px;
+            &__hr{
+                margin: auto;
+                height: 1px;
+                width: 35%;
+                background-color: #dbdbdb;
+            }
+            &__title{
+                color: #dbdbdb;;
+                width: 30%;
+            }
+        }
+        &__social{
+            display: flex;
+            &__google{
+                cursor: pointer;
+                padding: 2px;
+                background-color: orange;
+                width: 50%;
+                display: flex;
+                height: fit-content;
+                border-right: 10px solid white;
+                &__image{
+                    background-color: white;
+                    width: 20%;
+                    // height: 100%;
+                    // aspect-ratio: 1 / 1;
+                }
+                &__title{
+                    margin: auto;
+                    color: white;
+                    font-weight: 600
+                }
+            }
+            &__facebook{
+                cursor: pointer;
+                padding: 2px;
+                background-color: orange;
+                width: 50%;
+                display: flex;
+                height: fit-content;
+                border-left: 10px solid white;
+                &__image{
+                    background-color: white;
+                    width: 20%;
+                    // height: 100%;
+                    // aspect-ratio: 1 / 1;
+                }
+                &__title{
+                    margin: auto;
+                    color: white;
+                    font-weight: 600
+                }
+            }
+        }
+    }
+}
+p{
+    margin-bottom: 0px;
+}

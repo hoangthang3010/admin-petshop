@@ -1,0 +1,213 @@
+.dashboard{
+    // height: 0%;
+    display: flex;
+    &__menu{
+        position: fixed;
+        width: 80px;
+        height: 800px;
+        background-color: #008E97;
+        padding: 15px;
+        &__title{
+            height: 65px;
+            // background-color: red;
+            // padding: 10px;
+            border-bottom: 1px solid white;
+            &__image{
+                padding: 5px;
+            }
+        }
+    }
+    &__children{
+        margin-left: 80px;
+        height: 80px;
+        width: 100%;
+        text-align: end;
+        &__top{
+            padding: 20px;
+            background-color: #F58220;
+            height: 100%;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            &__titleLeft{
+                font-size: 20px;
+                font-weight: 550;
+                color: white;
+            }
+            &__titleRight{
+                // display: flex;
+                flex: 1;
+                &__listicon{
+                    display: inline-flex;
+                    &__icon{
+                        padding: 5px;
+                        margin: 0px 10px;
+                    }
+                }
+            }
+        }
+        &__body{
+            padding: 20px;
+            text-align: initial;
+            cursor: pointer;
+            &__title{
+                display: flex;
+                padding-bottom: 20px;
+                border-bottom: 1px solid rgb(230, 230, 230);
+                &__left{
+                    margin: 2px;
+                    &--time{
+                        font-size: 18px;
+                        font-weight: 550;
+                    }
+                }
+                &__right{
+                    // width: 100%;
+                    // margin: 10px;
+                    &__seven{
+                        width: 100px;
+                        padding: 3px 10px;
+                        &__num{
+                            color: #008E97;
+                            font-size: 18px;
+                            margin-right: 3px;
+                        }
+                        &__icon{
+                            margin: 0px 4px;
+                            transform: translate(20%, 20%);
+                            position: absolute; 
+                            font-size: 16px;
+                            // right: 0px;
+                            transition: transform 0.3s; 
+                            &:hover{
+                                // transform: rotate(180deg)
+                            }
+                        }
+                        &:hover{
+                            // color: white;
+                            background-color: #f3f3f3;
+                        }
+                    }
+                    &__range{
+                        // float: right;
+                        z-index: 100;
+                        width: 100px;
+                        // padding: 6px;
+                        position: absolute;
+                        background-color: white;
+                        text-align: center;
+                        // display: contents;
+                        border: 1px solid rgb(238, 238, 238);
+                        &__li{
+                            padding: 5px 15px;
+                            &:hover{
+                                font-weight: 550;
+                                color: white;
+                                background-color: #008E97;
+                            }
+                        }
+                    }
+                }
+            }
+            &__count{
+                border-bottom: 1px solid rgb(230, 230, 230);
+                width: auto;
+                margin: auto -10px !important;
+                .col-4{
+                    padding: 0px 10px;
+                }
+                &__item{
+                    .icon{
+                        color: white;
+                    }
+                    margin-top: 20px;
+                    margin-bottom: 20px; 
+                    .count-through{
+                        background-color: #57BF98;
+                    }
+                    .count-in{
+                        background-color: #E3624F;
+                    }
+                    .conversion-rate{
+                        background-color: #5CC6E6;
+                    }
+                    &__box{
+                        text-align: end;
+                        display: flex;
+                        // height: 100px;
+                        &__right{
+                            padding: 20px;
+                        }
+                        &__left{
+                            flex: 1;
+                            color: white;
+                            padding: 20px;
+                            &__title{
+                                font-size: 20px;
+                                font-weight: 550;
+                            }
+                            &__amount{
+                                font-size: 15px;
+                                font-weight: 550;
+                                margin-top: 10px;
+                            }
+                            &__ratio{
+                                font-size: 15px;
+                                font-weight: 550;
+                                margin-top: 10px;
+                            }
+                        }
+                    }
+                }
+            }
+            &__list-shop{
+                margin: 20px 0px;
+                padding-bottom: 20px;
+                border-bottom: 1px solid rgb(230, 230, 230);
+                &__title{
+                    background-color: #664F68;
+                    font-size: 18px;
+                    font-weight: 550;
+                    color: white;
+                    padding: 15px;
+                }
+                &__box{
+                    &__table{
+                        width: 100%;
+                        text-align: center;
+                        border-bottom: 1px solid rgb(230, 230, 230);
+                        &__tr{
+                            &__th{
+                                padding: 15px;
+                                background-color: #dcdcdc;
+                            }
+                            &__td{
+                                padding: 15px;
+                                border-top: 1px solid rgb(230, 230, 230);
+                            }
+                        }
+                    }
+                }
+            }
+            &__analytics{
+                width: auto;
+                height: 300px;
+                margin: auto -15px !important;
+                &__box{
+                    &__border{
+                        height: 500px;
+                        border: 1px solid rgb(230, 230, 230);
+                        // padding-left: -15px;
+                        &__title{
+                            // margin: 0px -15px;
+                            font-size: 18px;
+                            color: white;
+                            padding: 20px;
+                            background-color: #664F68;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

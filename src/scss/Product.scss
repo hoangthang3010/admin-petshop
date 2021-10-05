@@ -1,0 +1,75 @@
+.product{
+    width: 80%;
+    display: flex;
+    margin: auto;
+    padding: 10px 0px;
+    &__left{
+        &__filterprice{
+            &__title{
+                margin-bottom: 10px;
+                &__label{
+                    font-size: 15px;
+                    font-weight: 600;
+                    padding-bottom: 3px;
+                    border-bottom: 2px solid orange;
+
+                }
+            }
+            &__price{
+                margin: 5px;
+            }
+            &--submit{
+                padding: 5px 8px;
+                border: none;
+                color: white;
+                border-radius: 3px;
+                background-color: orange;
+                &:hover{
+                    background-color: rgb(220, 143, 0);
+                }
+            }
+        }
+    }
+    &__right{
+        display: block;
+        &__item{
+            margin-bottom: 20px;
+            text-align: center;
+            // padding:0px 6px;
+            border: 1px solid white;
+            // padding: 10px;
+            img{
+                border: 1px solid orange;
+                aspect-ratio: 1 / 1;
+                width: 100%;
+            }
+            &__name{ 
+                -webkit-line-clamp: 1;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+                display: -webkit-box;
+                margin-top: 5px;
+                margin-bottom: 0px;
+                font-size: 12px;
+                font-weight: 600;
+                color: black;
+                &:hover{
+                    color: rgb(177, 0, 0);
+                }
+            }
+            &__price{
+                color: red;
+                font-size: 15px;
+                padding: 0px 3px;
+            }
+            &__price-old{
+                color: rgb(140, 140, 140);
+                text-decoration: line-through;
+            }
+            &:hover{
+                // border: 1px solid rgb(223, 222, 222);
+                // box-shadow: 0px 0px 4px 0.4px #c4c4c4;
+            }
+        }
+    }
+}

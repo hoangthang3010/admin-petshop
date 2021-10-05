@@ -1,0 +1,60 @@
+.mutimenu{
+    &__title{
+        font-size: 15px;
+        font-weight: 600;
+        margin-bottom: 5px;
+        // border-left: 3px solid orange;
+        // padding-left: 3px;
+    }
+    &__ul{
+        border-bottom: 1px solid #ECECEC;
+        margin: 0px;
+        // border: 1px solid #ECECEC;
+        // border-bottom: none;
+        display: flex;
+        &__li{
+            position: relative;
+            width: 100%;
+            &__title{
+                width: 100%;
+                padding: 10px;
+                font-size: 13px;
+                margin-bottom: 0px;
+                &:hover{
+                    color: orange;
+                }
+            }
+            &__icon{
+                transform: translate(0%, 20%);
+                position: absolute; 
+                float: right;
+                top: 5px;
+                right: 5%;
+                font-size: 16px;
+                transition: transform 0.3s; 
+                &:hover{
+                    // transform: rotate(180deg)
+                }
+            }
+            &:hover{
+                border-left: 3px solid orange !important;
+                cursor: default;
+            }
+            &__ul1{
+                margin-left: 5px;
+                &:hover{
+                    
+                }
+                &__li1{
+                    padding: 5px 8px;
+                    &:hover{
+                        color: orange;
+                        border-left: 3px solid orange !important;
+                        padding-left: 8px;
+                        background-color: #ECECEC;
+                    }
+                }
+            }
+        }
+    }
+}

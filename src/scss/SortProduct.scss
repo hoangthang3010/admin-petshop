@@ -1,0 +1,17 @@
+.sort{
+    &__dropdown{
+        &__title{
+        }
+        &__btn{
+            &--submit{
+                padding: 0px;
+                border: none;
+                margin-right: 20px;
+                background-color: white;
+                &:hover{
+                    color: red;
+                }
+            }
+        }
+    }
+}

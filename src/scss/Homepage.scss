@@ -1,0 +1,41 @@
+.homepage{
+    padding: 10px;
+    width: 90%;
+    margin: auto;
+    // background-color: #F5F8FD;
+    &__top{
+        display: flex;
+        &__left{
+            // height: 200px;
+            // background-color: red;
+        }
+        &__mid{
+            aspect-ratio: 1.857 / 1;
+            // width: 100%;
+            // height: 100%;
+            // background-color: green;
+        }
+        &__right{
+            // height: 200px;
+            // background-color: aqua;
+        }
+    }
+    &__product{
+        margin-top: 5px;
+        &__bestselling{
+            border-top: 4px solid #FF6C0B;
+            border-bottom: 1px solid #ECECEC;
+            background-color: white;
+            align-items: center;
+            // height: 50px;
+            padding: 10px 0px;
+            &__title{
+               background-color: #FF6C0B;
+               color: white;
+               padding: 15px;
+               font-weight: 600;
+                font-size: 16px;
+            }
+        }
+    }
+}

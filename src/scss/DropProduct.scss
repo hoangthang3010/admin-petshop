@@ -1,0 +1,81 @@
+.dropproduct{
+    height: 100%;
+    &__drop{
+        // background-color: orange;
+        // border: 1px solid black;
+        // height: 100%;
+        z-index: 100;
+        // height: 100%;
+        // width: 202px;
+        // min-width: 170px;
+        display: flex;
+        &__item{
+            background-color: white;
+            min-width: 100% !important;
+            border: 1px solid #eaedf3;
+            &__box{
+                font-weight: 600;
+                border-bottom: 1px solid #eaedf3;
+                text-align: left;
+                padding: 15px;
+                &:hover{
+                    background-color: #eaedf3;
+                }
+                span{
+                    color: black;
+                    font-size: larger;
+                }
+                &__icon{
+                    float: right;
+                    
+                }
+            }
+        }
+        &__right{
+            z-index: 98;
+            display: none;
+        }
+        &:hover &__right{
+            background-color: white;
+                border: 1px solid #eaedf3;
+                border-left: none;
+                // height: 100%;
+                display: block;
+                will-change: transform;
+                min-width: 200px;
+                font-weight: 600;
+                &__box{
+                    height: 49px;
+                    border-bottom: 1px solid #eaedf3;
+                    padding: 15px;
+                    &:hover{
+                        background-color: #eaedf3;
+                    }
+                }
+                span{
+                    color: black;
+                    font-size: larger;
+                }
+                a{
+                    // float: right;
+                }
+        }
+        &__right1{
+            display: none;
+        }
+        &:hover &__right1{
+            height: 20%;
+            // min-height: 50px;
+            display: block;
+            padding: 15px;
+            will-change: transform;
+            min-width: 200px;
+            background-color: white;
+            font-weight: 600;
+            span{
+                color: black;
+                font-size: larger;
+            }
+        }
+    }
+}
