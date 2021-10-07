@@ -44,6 +44,10 @@ export default {
     updateUserRateProduct(rateId, payload){
         return Repository.put(`${rateProduct}/${rateId}`, payload)
     },
+    //xoa đánh giá sanr phẩm khi sản phaamrr bị xóa
+    deleteRateProduct(idRate){
+        return Repository.delete(`${rateProduct}/${idRate}`)
+    },
     getCommentProduct(){
         return Repository.get( `${commentProduct}`)
     }, 

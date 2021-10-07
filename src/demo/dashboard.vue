@@ -1,41 +1,6 @@
 <template>
     <div class="dashboard">
-        <div class="dashboard__menu">
-            <div class="dashboard__menu__title">
-                <img class="dashboard__menu__title__image" :src="logo" alt="">
-            </div>
-        </div>
         <div class="dashboard__children">
-            <div class="dashboard__children__top">
-                <div class="dashboard__children__top__titleLeft">
-                    Trang chủ
-                </div>
-                <div class="dashboard__children__top__titleRight">
-                    <!-- hi -->
-                    <div class="dashboard__children__top__titleRight__listicon">
-                        <div class="dashboard__children__top__titleRight__listicon__icon">
-                            <font-awesome-icon 
-                            :icon="['fas', 'home']" 
-                            size="2x" 
-                            color="white"
-                            />
-                        </div>
-                        <div class="dashboard__children__top__titleRight__listicon__icon">
-                            <font-awesome-icon 
-                            :icon="['fas', 'user']" 
-                            size="2x" 
-                            color="white"
-                            />
-                        </div>
-                        <div class="dashboard__children__top__titleRight__listicon__icon">
-                            <font-awesome-icon 
-                            :icon="['fas', 'sign-out-alt']" 
-                            size="2x" 
-                            color="white"
-                            /></div>
-                    </div>
-                </div>
-            </div>
             <div class="dashboard__children__body">
                 <div class="dashboard__children__body__title">
                     <div class="dashboard__children__body__title__left">
@@ -66,8 +31,9 @@
                         </ul>
                     </div>
                 </div>
-                <div class="dashboard__children__body__count row">
-                    <div class="dashboard__children__body__count__item col-4">
+                <table class="dashboard__children__body__count ">
+                    <tr class="row">
+                    <td class="dashboard__children__body__count__item col-4">
                         <div class="dashboard__children__body__count__item__box count-through">
                             <div class="dashboard__children__body__count__item__box__right">
                                 <font-awesome-icon
@@ -86,8 +52,8 @@
                                     /> 37%</p>
                             </div>
                         </div>
-                    </div>
-                    <div class="dashboard__children__body__count__item col-4">
+                    </td>
+                    <td class="dashboard__children__body__count__item col-4">
                         <div class="dashboard__children__body__count__item__box count-in">
                             <div class="dashboard__children__body__count__item__box__right">
                                 <font-awesome-icon
@@ -106,8 +72,8 @@
                                     /> 289%</p>
                             </div>
                         </div>
-                    </div>
-                    <div class="dashboard__children__body__count__item col-4">
+                    </td>
+                    <td class="dashboard__children__body__count__item col-4">
                         <div class="dashboard__children__body__count__item__box conversion-rate">
                             <div class="dashboard__children__body__count__item__box__right">
                                 <font-awesome-icon
@@ -120,15 +86,12 @@
                                 <p class="dashboard__children__body__count__item__box__left__title">Tỉ lệ chuyển đổi</p>
                                 <p class="dashboard__children__body__count__item__box__left__amount">78%</p>
                                 <p class="dashboard__children__body__count__item__box__left__ratio">
-                                    <!-- <font-awesome-icon
-                                        :icon="['fas', 'level-down-alt']" 
-                                        color="white"
-                                    /> -->
                                      0%</p>
                             </div>
                         </div>
-                    </div> 
-                </div>
+                    </td>
+                    </tr>
+                </table>
                 <div>
                     <p>Lượng người ra/vào cửa hàng ngày gần nhất</p>
                 </div>

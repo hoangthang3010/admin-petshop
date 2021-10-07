@@ -1,20 +1,16 @@
 <template>
   <div id="app">
-    <Header v-if="role !== 'admin'"/>
-    <HeaderMenu v-if="role !== 'admin'"/>
-    <!-- <router-view name='header'/>
-    <router-view name='header-menu'/> -->
-    <BackToTop/>
-    <router-view/>
-    {{children}}
-    <Footer/>
+    <NavMenu>
+      <BackToTop/>
+      <!-- {{children}} -->
+    </NavMenu>
   </div>
 </template>
 
 <script>
-import Header from './layout/Header.vue'
-import Footer from './layout/Footer.vue'
-import HeaderMenu from './layout/HeaderMenu.vue'
+import NavMenu from './layout/NavBar.vue'
+// import Footer from './layout/Footer.vue'
+// import HeaderMenu from './layout/HeaderMenu.vue'
 import '../src/scss/App.scss'
 import BackToTop from './components/BackToTop.vue'
 import { mapGetters, mapActions } from "vuex";
@@ -26,9 +22,9 @@ export default {
     }
   },
   components: {
-    Header,
-    Footer,
-    HeaderMenu,
+    NavMenu,
+    // Footer,
+    // HeaderMenu,
     BackToTop
   },
   created(){
