@@ -69,8 +69,24 @@
             </template>
         </a-table>
         <a-modal v-model="visible" title="Bình luận">
-            <p>Nội dung: {{replyComment.content}}</p>
-            <p>Có {{replyComment.reply ? replyComment.reply.length : '0'}} câu trả lời</p>
+            <span>Nội dung: {{replyComment.content}}</span>
+            <a-button v-show="isAddComment1" type="primary" style="margin:0 0 10px 10px" @click="isAddComment1 = !isAddComment1">
+                Trả lời bình luận này
+            </a-button>
+            <template>
+                <div class="add-comment row" v-show="!isAddComment1">
+                    <span class="col-2">{{!isAddComment1 ? 'Trả lời:' : ''}}</span>
+                    <!-- <a-input class="col-2" v-model="idProductAdd" placeholder="ID sản phẩm" /> -->
+                    <a-input class="col-6" v-model="contentProductAdd1" placeholder="Nội dung" />
+                    <a-button type="primary" @click="saveAddComment1">
+                        Lưu
+                    </a-button>
+                    <a-button type="danger" v-show="!isAddComment1" @click="handleCancelAdd1">
+                        Hủy
+                    </a-button>
+                </div>
+            </template>
+            <p>Có {{replyComment.reply ? replyComment.reply.length : '0'}} trả lời</p>
             <a-table
                 style="border-bottom: 1px solid #e8e8e8"
                 :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
@@ -80,16 +96,16 @@
                 :pagination = false
             >
                 <template
-                    v-for="col in ['userId', 'content', 'time']"
+                    v-for="col in ['userId', 'content']"
                     :slot="col"
-                    slot-scope="text, record"
+                    slot-scope="text, record, key"
                 >
                     <div :key="col">
                         <a-input
-                        v-if="record.editable"
+                        v-if="record.editable1"
                         style="margin: -5px 0"
                         :value="text"
-                        @change="e => handleChange1(e.target.value, record.key, col)"
+                        @change="e => handleChange1(e.target.value, key, col)"
                         />
                         <template v-else>
                         {{ text }}
@@ -98,15 +114,15 @@
                 </template>
                 <template slot="action" slot-scope="text, record, key">
                     <div class="editable-row-operations">
-                        <span v-if="record.editable">
-                            <a @click="() => save(record.key, record)">Save</a>
+                        <span v-if="record.editable1">
+                            <a @click="() => save1(key)">Save</a>
                             <a-divider type="vertical" />
-                            <a @click="() => cancel(record.key)">Cancel</a>
+                            <a @click="() => cancel1(key)">Cancel</a>
                         </span>
                         <span v-else>
-                            <a :disabled="editingKey !== ''" @click="() => edit(record.key)">Chỉnh sửa</a>
+                            <a :disabled="editingKey1 !== ''" @click="() => edit1(key)">Chỉnh sửa</a>
                             <a-divider type="vertical" />
-                            <a @click="deleteCommentProduct(record, key)">Xóa</a>
+                            <a @click="deleteCommentProduct1(record)">Xóa</a>
                         </span>
                     </div>
                 </template>
@@ -158,8 +174,8 @@ const innerColumns = [
   {
     title: 'Nội dung',
     dataIndex: 'content',
-    scopedSlots: { userId: 'content' },
-    // width: '15%'
+    scopedSlots: { customRender: 'content' },
+    width: '40%'
   },
   {
     title: 'Thời gian',
@@ -169,7 +185,7 @@ const innerColumns = [
   },
   {
     title: 'Hành động',
-    width: '0%',
+    width: '16%',
     key: 'action',
     scopedSlots: { customRender: 'action' },
   },
@@ -183,6 +199,7 @@ for (let i = 0; i < 3; ++i) {
     time: 'Upgraded: 56',
   });
 }
+import { uuid } from 'vue-uuid'
 import {RepositoryFactory} from '../api/RepositoryFactory';
 const PostsRepository = RepositoryFactory.communicationAPI('posts')
 export default {
@@ -193,13 +210,18 @@ export default {
             selectedRowKeys: [],
             allCommentProduct: [],
             editingKey: '',
+            editingKey1: '',
             innerData,
             visible: false,
             replyComment: [],
             isAddComment: true,
+            isAddComment1: true,
             idProductAdd: '',
             contentProductAdd: '',
-            productAll: []
+            contentProductAdd1: '',
+            productAll: [],
+            cacheData: [],
+            uuid: uuid.v4(),
         }
     },
     // watch:{
@@ -270,23 +292,79 @@ export default {
             }
             // console.log(a);
         },
+        saveAddComment1(){
+            if(this.contentProductAdd1){
+                const date = new Date()
+                const a = {
+                    "id": [...Array(30)].map(() => Math.random().toString(36)[2]).join(''),
+                    "userId": 1,
+                    "content": this.contentProductAdd1,
+                    "time": date.toJSON(),
+                }
+                const newData = [...this.replyComment.reply];
+                const newCacheData = [...this.cacheData1];
+                this.replyComment.reply = newData.concat(a);
+                this.updateCommentProductId(this.replyComment.id, this.replyComment)
+                this.getCommentProduct()
+                // Object.assign(targetCache, target);
+                this.cacheData1 = newCacheData;
+                this.editingKey1 = '';
+                this.contentProductAdd1 = ''
+                this.isAddComment1 = true
+            }
+            else{
+                this.$notification['error']({
+                    message: 'Thêm thất bại',
+                    description:
+                    'Vui lòng nhập nội dung',
+                    duration: 2,
+                    style: {
+                        top: `75px`,
+                        marginBottom: '10px'
+                    },
+                });
+            }
+        },
+        deleteCommentProduct1(record){
+            let newData = [...this.replyComment.reply];
+            const newCacheData = [...this.cacheData1];
+            this.replyComment.reply = newData.filter(item => item.id !== record.id)
+            newData = this.replyComment.reply
+            // console.log(newData);
+            // console.log(this.replyComment.reply);
+            this.updateCommentProductId(this.replyComment.id, this.replyComment)
+            this.getCommentProduct()
+            // Object.assign(targetCache, target);
+            this.cacheData1 = newCacheData;
+            this.editingKey1 = '';
+        },
+        handleCancelAdd1(){
+            this.contentProductAdd1 = ''
+            this.isAddComment1 = true
+        },
         moreCommentProduct(item) {
             this.replyComment = item
             this.visible = true;
+            this.cacheData1 = item.reply.map(item => ({ ...item }));
         },
         handleOk() {
             // console.log(e);
             // this.visible = false;
         },
         handleChange(value, key, column) {
-            // console.log(value)
-            // console.log(key)
-            // console.log(column);
             const newData = [...this.allCommentProduct];
             const target = newData.filter((item, key1) => key === key1)[0];
             if (target) {
                 target[column] = value;
                 this.allCommentProduct = newData;
+            }
+        },
+        handleChange1(value, key, column) {
+            const newData = [...this.replyComment.reply];
+            const target = newData.filter((item, key1) => key === key1)[0];
+            if (target) {
+                target[column] = value;
+                this.replyComment.reply = newData;
             }
         },
         edit(key) {
@@ -298,6 +376,15 @@ export default {
                 this.allCommentProduct = newData;
             }
         },
+        edit1(key) {
+            const newData = [...this.replyComment.reply];
+            const target = newData.filter((item, key1) => key === key1)[0];
+            this.editingKey1 = key;
+            if (target) {
+                target.editable1 = true;
+                this.replyComment.reply = newData;
+            }
+        },
         save(key, item) {
             const newData = [...this.allCommentProduct];
             const newCacheData = [...this.cacheData];
@@ -305,7 +392,7 @@ export default {
             const targetCache = newCacheData.filter((item, key1) => key === key1)[0];
             if (target && targetCache) {
                 delete target.editable;
-                target.time = new Date()
+                target.time = new Date().toJSON(),
                 this.updateCommentProductId(item.id, target)
                 this.getCommentProduct()
                 // target.editable = false;
@@ -315,6 +402,23 @@ export default {
             }
             this.editingKey = '';
         },
+        save1(key) {
+            const newData = [...this.replyComment.reply];
+            const newCacheData = [...this.cacheData1];
+            const target = newData.filter((item, key1) => key === key1)[0];
+            const targetCache = newCacheData.filter((item, key1) => key === key1)[0];
+            if (target && targetCache) {
+                delete target.editable1;
+                target.time = new Date().toJSON(),
+                this.replyComment.reply = newData;
+                this.updateCommentProductId(this.replyComment.id, this.replyComment)
+                this.getCommentProduct()
+                Object.assign(targetCache, target);
+                this.cacheData1 = newCacheData;
+            // this.cacheData1 = item.reply.map(item => ({ ...item }));
+            }
+            this.editingKey1 = '';
+        },
         cancel(key) {
             const newData = [...this.allCommentProduct];
             const target = newData.filter((item, key1) => key === key1)[0];
@@ -323,6 +427,16 @@ export default {
                 Object.assign(target, this.cacheData.filter((item, key1) => key === key1)[0]);
                 delete target.editable;
                 this.allCommentProduct = newData;
+            }
+        },
+        cancel1(key) {
+            const newData = [...this.replyComment.reply];
+            const target = newData.filter((item, key1) => key === key1)[0];
+            this.editingKey1 = '';
+            if (target) {
+                Object.assign(target, this.cacheData.filter((item, key1) => key === key1)[0]);
+                delete target.editable1;
+                this.replyComment.reply = newData;
             }
         },
         deleteCommentProduct(item){
@@ -336,7 +450,7 @@ export default {
         async getCommentProduct(){
             const {data} = await PostsRepository.getCommentProduct();
             this.allCommentProduct = data
-        this.cacheData = data.map(item => ({ ...item }));
+            this.cacheData = data.map(item => ({ ...item }));
         },
         async deteleCommentProductId(id){
             const {data} = await PostsRepository.deteleCommentProductId(id);
