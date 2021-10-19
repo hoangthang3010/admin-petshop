@@ -22,10 +22,12 @@
           </router-link>
         </a-menu-item>
         <a-menu-item key="2">
-          <a-icon type="video-camera" />
-          <span>
-              Quản lý đơn hàng
-          </span>
+          <router-link to="/user">
+            <a-icon type="video-camera" />
+            <span>
+                Quản lý đơn hàng
+            </span>
+          </router-link>
         </a-menu-item>
         <a-menu-item key="3">
           <a-icon type="upload" />

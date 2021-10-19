@@ -1,24 +1,8 @@
 <template>
     <div>
         <h3>Quản lý bình luận sản phẩm</h3>
-        <a-button v-show="isAddComment" type="primary" @click="isAddComment = !isAddComment">
-            Thêm
-        </a-button>
-        <template>
-            <div class="add-comment row" v-show="!isAddComment">
-                <span class="col-2">{{!isAddComment ? 'Thêm bình luận:' : ''}}</span>
-                <a-input class="col-2" v-model="idProductAdd" placeholder="ID sản phẩm" />
-                <a-input class="col-6" v-model="contentProductAdd" placeholder="Nội dung" />
-                <a-button type="primary" @click="saveAddComment">
-                    Lưu
-                </a-button>
-                <a-button type="danger" v-show="!isAddComment" @click="handleCancelAdd">
-                    Hủy
-                </a-button>
-            </div>
-        </template>
         <a-table
-            style="border-bottom: 1px solid #e8e8e8; margin-top: 10px"
+            style="border-bottom: 1px solid #e8e8e8"
             :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
             :columns="columns"
             :data-source="allCommentProduct"
@@ -37,14 +21,14 @@
             <template
                 v-for="col in ['productId', 'userId', 'content']"
                 :slot="col"
-                slot-scope="text, record, key"
+                slot-scope="text, record"
             >
                 <div :key="col">
                     <a-input
                     v-if="record.editable"
                     style="margin: -5px 0"
                     :value="text"
-                    @change="e => handleChange(e.target.value, key, col)"
+                    @change="e => handleChange(e.target.value, record.key, col)"
                     />
                     <template v-else>
                     {{ text }}
@@ -54,7 +38,7 @@
             <template slot="action" slot-scope="text, record, key">
                 <div class="editable-row-operations">
                     <span v-if="record.editable">
-                        <a @click="() => save(key, record)">Save</a>
+                        <a @click="() => save(key)">Save</a>
                         <a-divider type="vertical" />
                         <a @click="() => cancel(key)">Cancel</a>
                     </span>
@@ -68,9 +52,10 @@
                 </div>
             </template>
         </a-table>
-        <a-modal v-model="visible" title="Bình luận">
-            <p>Nội dung: {{replyComment.content}}</p>
-            <p>Có {{replyComment.reply ? replyComment.reply.length : '0'}} câu trả lời</p>
+        {{allCommentProduct}}
+        <a-modal v-model="visible" title="Bình luận" @ok="handleOk">
+            <p>Bình luận: {{replyComment.content}}</p>
+            <p>Có {{replyComment.content}} trả lời cho bình luận này</p>
             <a-table
                 style="border-bottom: 1px solid #e8e8e8"
                 :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
@@ -89,7 +74,7 @@
                         v-if="record.editable"
                         style="margin: -5px 0"
                         :value="text"
-                        @change="e => handleChange1(e.target.value, record.key, col)"
+                        @change="e => handleChange(e.target.value, record.key, col)"
                         />
                         <template v-else>
                         {{ text }}
@@ -99,12 +84,12 @@
                 <template slot="action" slot-scope="text, record, key">
                     <div class="editable-row-operations">
                         <span v-if="record.editable">
-                            <a @click="() => save(record.key, record)">Save</a>
+                            <a @click="() => save(record.key)">Save</a>
                             <a-divider type="vertical" />
                             <a @click="() => cancel(record.key)">Cancel</a>
                         </span>
                         <span v-else>
-                            <a :disabled="editingKey !== ''" @click="() => edit(record.key)">Chỉnh sửa</a>
+                            <a :disabled="editingKey !== ''" @click="() => edit(key)">Chỉnh sửa</a>
                             <a-divider type="vertical" />
                             <a @click="deleteCommentProduct(record, key)">Xóa</a>
                         </span>
@@ -195,11 +180,7 @@ export default {
             editingKey: '',
             innerData,
             visible: false,
-            replyComment: [],
-            isAddComment: true,
-            idProductAdd: '',
-            contentProductAdd: '',
-            productAll: []
+            replyComment: []
         }
     },
     // watch:{
@@ -209,67 +190,8 @@ export default {
     // },
     created(){
         this.getCommentProduct()
-        this.getProductDetail()
     },
     methods:{
-        handleCancelAdd(){
-            this.idProductAdd=''
-            this.contentProductAdd=''
-            this.isAddComment = true
-        },
-        saveAddComment(){
-            const check = this.productAll.map(item =>{
-                    return item.id;
-                }).indexOf(Number(this.idProductAdd));
-                
-            const a = {
-                "productId": Number(this.idProductAdd),
-                "userId": 1,
-                "content": this.contentProductAdd,
-                "time": new Date(),
-                "reply": []
-            }
-            if(!this.idProductAdd || !this.contentProductAdd){
-                this.$notification['error']({
-                    message: 'Thêm thất bại',
-                    description:
-                    'Vui lòng nhập đầy đủ thông tin',
-                    duration: 2,
-                    style: {
-                        top: `75px`,
-                        marginBottom: '10px'
-                    },
-                });
-            }
-            else if(Number(check) == -1){
-                this.$notification['error']({
-                    message: 'Thêm thất bại',
-                    description:
-                    'Sản phẩm không tồn tại',
-                    duration: 2,
-                    style: {
-                        top: `75px`,
-                        marginBottom: '10px'
-                    },
-                });
-            }
-            else{
-                this.createCommentProduct(a)
-                this.getCommentProduct()
-                this.isAddComment = true
-                this.$notification['success']({
-                    message: 'Thêm bình luận thành công',
-                    duration: 2,
-                    style: {
-                        top: `75px`,
-                        marginBottom: '10px'
-                    },
-                })
-                this.idProductAdd = ''
-                this.contentProductAdd = ''
-            }
-            // console.log(a);
-        },
         moreCommentProduct(item) {
             this.replyComment = item
             this.visible = true;
@@ -279,15 +201,13 @@ export default {
             // this.visible = false;
         },
         handleChange(value, key, column) {
-            // console.log(value)
-            // console.log(key)
-            // console.log(column);
             const newData = [...this.allCommentProduct];
             const target = newData.filter((item, key1) => key === key1)[0];
             if (target) {
                 target[column] = value;
                 this.allCommentProduct = newData;
             }
+            console.log(value);
         },
         edit(key) {
             const newData = [...this.allCommentProduct];
@@ -298,17 +218,13 @@ export default {
                 this.allCommentProduct = newData;
             }
         },
-        save(key, item) {
+        save(key) {
             const newData = [...this.allCommentProduct];
             const newCacheData = [...this.cacheData];
             const target = newData.filter((item, key1) => key === key1)[0];
             const targetCache = newCacheData.filter((item, key1) => key === key1)[0];
             if (target && targetCache) {
-                delete target.editable;
-                target.time = new Date()
-                this.updateCommentProductId(item.id, target)
-                this.getCommentProduct()
-                // target.editable = false;
+                target.editable = false;
                 this.allCommentProduct = newData;
                 Object.assign(targetCache, target);
                 this.cacheData = newCacheData;
@@ -321,7 +237,7 @@ export default {
             this.editingKey = '';
             if (target) {
                 Object.assign(target, this.cacheData.filter((item, key1) => key === key1)[0]);
-                delete target.editable;
+                target.editable = false;
                 this.allCommentProduct = newData;
             }
         },
@@ -341,18 +257,6 @@ export default {
         async deteleCommentProductId(id){
             const {data} = await PostsRepository.deteleCommentProductId(id);
             this.allCommentProduct = data
-        },
-        async updateCommentProductId(id, payload){
-            const {data} = await PostsRepository.updateCommentProductId(id, payload);
-            this.allCommentProduct = data
-        },
-        async createCommentProduct(payload){
-            const {data} = await PostsRepository.createCommentProduct(payload);
-            this.allCommentProduct = data
-        },
-        async getProductDetail(){
-            const {data} = await PostsRepository.getProductDetail();
-            this.productAll = data
         }
     }
 }
@@ -364,17 +268,6 @@ export default {
 } */
 .ant-modal{
     width: 900px !important;
-    top: 40px !important;
-    .ant-modal-footer{
-        display: none;
-    }
-}
-.add-comment{
-    margin: 10px 10px 20px 0px !important;
-    display: flex;
-    align-items: center;
-    .col-2,.col-3,.col-6, button{
-        margin-right: 8px;
-    }
+    top: 40px !important
 }
 </style>

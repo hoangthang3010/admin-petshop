@@ -1,5 +1,5 @@
 <template>
-    <div class="add-product">
+    <div class="add-product" :style="!isShowDescribe?'left: 26%':''">
         <div class="container" :style="`width: ${isShowDescribe ? '1200px': '600px'}`">
             <h4>Thêm sản phẩm</h4>
             <div>
@@ -37,7 +37,7 @@
                             <div class="col-3">Số lượng <span class="obligatory">*</span></div>
                             <div class="col-3"><input type="number" v-model="amountProduct"></div>
                             <div class="col-3">Mô tả</div>
-                            <div class="col-3"><input type="button" value="Thêm" @click="isShowDescribe = !isShowDescribe"></div>
+                            <div class="col-3"><input type="button" :value="!isShowDescribe?'Thêm':'Hủy'" @click="isShowDescribe = !isShowDescribe"></div>
                         </div>
                         <div class="row">
                             <div class="col-3">Ảnh <span class="obligatory">*</span></div>
@@ -61,7 +61,7 @@
             </div>
             <div>
                 <input type="button" @click="onSave" value="Thêm">
-                <input type="button" value="Hủy">
+                <input style="margin-left: 8px" type="button" value="Hủy" @click="onCancel">
             </div>
         </div>
     </div>
@@ -153,6 +153,7 @@ const PostsRepository = RepositoryFactory.communicationAPI('posts')
                 "detail": this.valueSelectTypeProduct + '_' + this.valueSelectType,
                 "product_amount": Number(this.amountProduct),
                 "count": 1,
+                "quantity_sold": 0
                 // "describe": this.describe
             }
             if(this.isShowDescribe){
@@ -178,6 +179,18 @@ const PostsRepository = RepositoryFactory.communicationAPI('posts')
                         },
                     });
                 }
+                else if(this.priceProduct<0){
+                    this.$notification['error']({
+                        message: 'Thêm sản phẩm thất bại',
+                        description:
+                        'Giá sản phẩm không hợp lệ',
+                        duration: 2,
+                        style: {
+                            marginTop: `75px`,
+                            marginBottom: '-50px'
+                        },
+                    });
+                }
                 else{
                     this.$notification['success']({
                         message: 'Thêm sản phẩm thành công',
@@ -190,6 +203,9 @@ const PostsRepository = RepositoryFactory.communicationAPI('posts')
                     this.addProductDetail()
                     this.$emit('isShowFormAdd');
                 }
+            },
+            onCancel(){
+                this.$emit('isShowFormAdd');
             },
             uploadImage(e){
                 const image = e.target.files[0];
@@ -210,6 +226,7 @@ const PostsRepository = RepositoryFactory.communicationAPI('posts')
 
 <style scoped lang="scss">
 .add-product{
+    width: max-content;
     .container{
         padding: 15px;
         // min-width: 1200px;

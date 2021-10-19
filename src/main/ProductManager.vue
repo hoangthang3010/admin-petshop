@@ -40,11 +40,11 @@
             :scroll="{ y: 320 }"
             :pagination = false
         >
-            <div slot="action" slot-scope="text, record, key">
+            <template slot="action" slot-scope="text, record, key">
                 <a>Chỉnh sửa</a>
                 <a-divider type="vertical" />
                 <a @click="deleteProduct(record, key)">Xóa</a>
-            </div>
+            </template>
         </a-table>
         <div class="modal-add-product" v-if="isShowAddProduct">{{isShowAddProduct}}
             <div class="display-modal-add-product" @click="isShowAddProduct = !isShowAddProduct"></div>
