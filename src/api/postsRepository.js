@@ -4,6 +4,7 @@ const account = "/account"
 const productDetail = "/productDetail"
 const rateProduct = "/rateProduct"
 const commentProduct = "/commentProduct"
+const orderProduct = "/orderProduct"
 export default {
     getAccount(){
         return Repository.get(`${account}`);
@@ -59,6 +60,18 @@ export default {
     },
     updateCommentProductId(commentProductId, payload){
         return Repository.put(`${commentProduct}/${commentProductId}`, payload)
+    },
+    getOrder(){
+        return Repository.get( `${orderProduct}`)
+    }, 
+    createOrder(payload){
+        return Repository.post( `${orderProduct}`, payload)
+    },
+    deteleOrder(idOrderProduct){
+        return Repository.delete(`${orderProduct}/${idOrderProduct}`)
+    },
+    updateOrderId(idOrderProduct, payload){
+        return Repository.put(`${orderProduct}/${idOrderProduct}`, payload)
     },
 
 }

@@ -22,7 +22,7 @@
           </router-link>
         </a-menu-item>
         <a-menu-item key="2">
-          <router-link to="/user">
+          <router-link to="/order">
             <a-icon type="video-camera" />
             <span>
                 Quản lý đơn hàng
@@ -30,8 +30,10 @@
           </router-link>
         </a-menu-item>
         <a-menu-item key="3">
-          <a-icon type="upload" />
-          <span>Quản lý người dùng</span>
+          <router-link to="/order">
+            <a-icon type="upload" />
+            <span>Quản lý người dùng</span>
+          </router-link>
         </a-menu-item>
         <a-menu-item key="4">
           <router-link to="/rateproduct">

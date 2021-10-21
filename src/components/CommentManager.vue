@@ -17,6 +17,11 @@
                 </a-button>
             </div>
         </template>
+        <div style="margin-top: 10px">
+            <span>Có {{allCommentProduct.length}} bình luận</span>
+            <a-divider type="vertical" />
+            <span>Đã chọn {{selectedRowKeys.length}}</span>
+        </div>
         <a-table
             style="border-bottom: 1px solid #e8e8e8; margin-top: 10px"
             :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
@@ -136,7 +141,7 @@ const columns = [
   {
     title: 'Id sản phẩm',
     dataIndex: 'productId',
-    width: '10%',
+    width: '15%',
     scopedSlots: { customRender: 'productId' },
   },
   {
@@ -155,11 +160,11 @@ const columns = [
     title: 'Thời gian',
     dataIndex: 'time',
     // scopedSlots: { customRender: 'time' },
-    // width: '15%'
+    width: '18%'
   },
   {
     title: 'Hành động',
-    width: '25%',
+    width: '18%',
     key: 'action',
     scopedSlots: { customRender: 'action' },
   },
