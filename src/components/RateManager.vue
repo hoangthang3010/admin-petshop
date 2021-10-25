@@ -106,10 +106,12 @@ export default {
             idProductAdd: ''
         }
     },
-    created(){
-        this.getAccount()
-        this.getProductDetail()
+    async created(){
+        await this.getAccount()
+        await this.getProductDetail()
+        // setTimeout(() => {
         this.getRateProduct()
+        // },1000);
     },
     methods:{
         saveAddStar(){

@@ -26,7 +26,10 @@ import firebase from "firebase";
 // Vue.use(DatePicker);
 import JwPagination from 'jw-vue-pagination';
 import VueFbCustomerChat from 'vue-fb-customer-chat'
- 
+import VueApexCharts from 'vue-apexcharts'
+Vue.use(VueApexCharts)
+
+Vue.component('apexchart', VueApexCharts)
 Vue.use(VueFbCustomerChat, {
   page_id: 101051212340029, //  change 'null' to your Facebook Page ID,
   theme_color: '#0A7CFF', // theme color in HEX

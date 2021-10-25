@@ -42,14 +42,14 @@
             <template
                 v-for="col in ['productId', 'userId', 'content']"
                 :slot="col"
-                slot-scope="text, record, key"
+                slot-scope="text, record"
             >
                 <div :key="col">
                     <a-input
                     v-if="record.editable"
                     style="margin: -5px 0"
                     :value="text"
-                    @change="e => handleChange(e.target.value, key, col)"
+                    @change="e => handleChange(e.target.value, record, col)"
                     />
                     <template v-else>
                     {{ text }}
@@ -59,12 +59,12 @@
             <template slot="action" slot-scope="text, record, key">
                 <div class="editable-row-operations">
                     <span v-if="record.editable">
-                        <a @click="() => save(key, record)">Save</a>
+                        <a @click="() => save(record)">Save</a>
                         <a-divider type="vertical" />
-                        <a @click="() => cancel(key)">Cancel</a>
+                        <a @click="() => cancel(record)">Cancel</a>
                     </span>
                     <span v-else>
-                        <a :disabled="editingKey !== ''" @click="() => edit(key)">Chỉnh sửa</a>
+                        <a :disabled="editingKey !== ''" @click="() => edit(record)">Chỉnh sửa</a>
                         <a-divider type="vertical" />
                         <a @click="deleteCommentProduct(record, key)">Xóa</a>
                         <a-divider type="vertical" />
@@ -103,29 +103,29 @@
                 <template
                     v-for="col in ['userId', 'content']"
                     :slot="col"
-                    slot-scope="text, record, key"
+                    slot-scope="text, record"
                 >
                     <div :key="col">
                         <a-input
                         v-if="record.editable1"
                         style="margin: -5px 0"
                         :value="text"
-                        @change="e => handleChange1(e.target.value, key, col)"
+                        @change="e => handleChange1(e.target.value, record, col)"
                         />
                         <template v-else>
                         {{ text }}
                         </template>
                     </div>
                 </template>
-                <template slot="action" slot-scope="text, record, key">
+                <template slot="action" slot-scope="text, record">
                     <div class="editable-row-operations">
                         <span v-if="record.editable1">
-                            <a @click="() => save1(key)">Save</a>
+                            <a @click="() => save1(record)">Save</a>
                             <a-divider type="vertical" />
-                            <a @click="() => cancel1(key)">Cancel</a>
+                            <a @click="() => cancel1(record)">Cancel</a>
                         </span>
                         <span v-else>
-                            <a :disabled="editingKey1 !== ''" @click="() => edit1(key)">Chỉnh sửa</a>
+                            <a :disabled="editingKey1 !== ''" @click="() => edit1(record)">Chỉnh sửa</a>
                             <a-divider type="vertical" />
                             <a @click="deleteCommentProduct1(record)">Xóa</a>
                         </span>
@@ -356,49 +356,49 @@ export default {
             // console.log(e);
             // this.visible = false;
         },
-        handleChange(value, key, column) {
+        handleChange(value, record, column) {
             const newData = [...this.allCommentProduct];
-            const target = newData.filter((item, key1) => key === key1)[0];
+            const target = newData.filter(item => item.id === record.id)[0];
             if (target) {
                 target[column] = value;
                 this.allCommentProduct = newData;
             }
         },
-        handleChange1(value, key, column) {
+        handleChange1(value, record, column) {
             const newData = [...this.replyComment.reply];
-            const target = newData.filter((item, key1) => key === key1)[0];
+            const target = newData.filter(item => item.id === record.id)[0];
             if (target) {
                 target[column] = value;
                 this.replyComment.reply = newData;
             }
         },
-        edit(key) {
+        edit(record) {
             const newData = [...this.allCommentProduct];
-            const target = newData.filter((item, key1) => key === key1)[0];
-            this.editingKey = key;
+            const target = newData.filter(item => item.id === record.id)[0];
+            this.editingKey = record.id;
             if (target) {
                 target.editable = true;
                 this.allCommentProduct = newData;
             }
         },
-        edit1(key) {
+        edit1(record) {
             const newData = [...this.replyComment.reply];
-            const target = newData.filter((item, key1) => key === key1)[0];
-            this.editingKey1 = key;
+            const target = newData.filter(item => item.id === record.id)[0];
+            this.editingKey1 = record.id;
             if (target) {
                 target.editable1 = true;
                 this.replyComment.reply = newData;
             }
         },
-        save(key, item) {
+        save(record) {
             const newData = [...this.allCommentProduct];
             const newCacheData = [...this.cacheData];
-            const target = newData.filter((item, key1) => key === key1)[0];
-            const targetCache = newCacheData.filter((item, key1) => key === key1)[0];
+            const target = newData.filter(item => item.id === record.id)[0];
+            const targetCache = newCacheData.filter(item => item.id === record.id)[0];
             if (target && targetCache) {
                 delete target.editable;
                 target.time = new Date().toJSON(),
-                this.updateCommentProductId(item.id, target)
+                this.updateCommentProductId(record.id, target)
                 this.getCommentProduct()
                 // target.editable = false;
                 this.allCommentProduct = newData;
@@ -407,11 +407,11 @@ export default {
             }
             this.editingKey = '';
         },
-        save1(key) {
+        save1(record) {
             const newData = [...this.replyComment.reply];
             const newCacheData = [...this.cacheData1];
-            const target = newData.filter((item, key1) => key === key1)[0];
-            const targetCache = newCacheData.filter((item, key1) => key === key1)[0];
+            const target = newData.filter(item => item.id == record.id)[0];
+            const targetCache = newCacheData.filter(item => item.id == record.id)[0];
             if (target && targetCache) {
                 delete target.editable1;
                 target.time = new Date().toJSON(),
@@ -424,22 +424,22 @@ export default {
             }
             this.editingKey1 = '';
         },
-        cancel(key) {
+        cancel(record) {
             const newData = [...this.allCommentProduct];
-            const target = newData.filter((item, key1) => key === key1)[0];
+            const target = newData.filter(item => item.id === record.id)[0];
             this.editingKey = '';
             if (target) {
-                Object.assign(target, this.cacheData.filter((item, key1) => key === key1)[0]);
+                Object.assign(target, this.cacheData.filter(item => item.id === record.id)[0]);
                 delete target.editable;
                 this.allCommentProduct = newData;
             }
         },
-        cancel1(key) {
+        cancel1(record) {
             const newData = [...this.replyComment.reply];
-            const target = newData.filter((item, key1) => key === key1)[0];
+            const target = newData.filter(item => item.id == record.id)[0];
             this.editingKey1 = '';
             if (target) {
-                Object.assign(target, this.cacheData.filter((item, key1) => key === key1)[0]);
+                Object.assign(target, this.cacheData.filter(item => item.id == record.id)[0]);
                 delete target.editable1;
                 this.replyComment.reply = newData;
             }
