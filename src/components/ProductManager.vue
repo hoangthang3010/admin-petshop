@@ -12,25 +12,31 @@
                         <option value="medicine">Thuốc</option>
                     </select>
                 </div>
-                    <a-divider type="vertical" />
+                <a-divider type="vertical" />
                 <div class="col-5" style="display: flex">
                     <input type="text" v-model="valueSearchQuery" class="search-product"/>
                     <input type="button" @click="clickSearch = true" value="Tìm kiếm">
                     <!-- {{searchQuery}} - {{productSearch}} -->
                 </div>
+                <a-divider type="vertical" />
+                <div style="padding: 0 15px">
+                    <input type="button" value="Thêm" class="add-product" @click="addProduct">
+                </div>
             </div>
-            <input type="button" value="Thêm" class="add-product" @click="addProduct">
+            <div>
+                Thời gian: 
+                <date-picker v-model="value1" type="date" @change="onChangeDate" range placeholder="Chọn thời gian"></date-picker>
+            </div>
         </div>
         <div style="margin-top: 16px">
         <!-- <a-button type="primary" :disabled="!hasSelected" :loading="loading" @click="start">
             Reload
         </a-button> -->
-            <span style="margin-left: 8px">
-                <!-- v-if="hasSelected" -->
-                <template >
-                {{ `Đã chọn ${selectedRowKeys.length} sản phẩm` }}
-                </template>
-            </span>
+            <div style="margin-bottom: 4px">
+                <span>Có {{allProduct.length}} sản phẩm</span>
+                <a-divider type="vertical" />
+                <span>Đã chọn {{selectedRowKeys.length}}</span>
+            </div>
         </div>
         <a-table
             style="border-bottom: 1px solid #e8e8e8"
@@ -41,14 +47,14 @@
             :pagination = false
         >
             <template slot="action" slot-scope="text, record, key">
-                <a>Chỉnh sửa</a>
+                <a @click="editProduct(record)">Chỉnh sửa</a>
                 <a-divider type="vertical" />
                 <a @click="deleteProduct(record, key)">Xóa</a>
             </template>
         </a-table>
         <div class="modal-add-product" v-if="isShowAddProduct">{{isShowAddProduct}}
             <div class="display-modal-add-product" @click="isShowAddProduct = !isShowAddProduct"></div>
-            <AddProduct @isShowFormAdd="isShowAddProduct = false"/>
+            <AddProduct @isShowFormAdd="isShowFormAdd" :productEdit="productEdit"/>
         </div>
     </div>
 </template>
@@ -80,6 +86,8 @@ const columns = [
     scopedSlots: { customRender: 'action' },
   },
 ];
+import DatePicker from 'vue2-datepicker';
+import 'vue2-datepicker/index.css';
 import AddProduct from '../components/AddProduct.vue'
 import {RepositoryFactory} from '../api/RepositoryFactory';
 const PostsRepository = RepositoryFactory.communicationAPI('posts')
@@ -95,10 +103,13 @@ const PostsRepository = RepositoryFactory.communicationAPI('posts')
                 productSearch: [],
                 clickSearch: false,
                 isShowAddProduct: false,
-                allRateProduct: []
+                allRateProduct: [],
+                value1: ['',''],
+                allProductBackup: [],
+                productEdit: []
             }
         },
-        components: {AddProduct},
+        components: {AddProduct, DatePicker},
         computed: {
             hasSelected() {
             return this.selectedRowKeys.length > 0;
@@ -140,8 +151,31 @@ const PostsRepository = RepositoryFactory.communicationAPI('posts')
             this.fetchProductAll()
             this.getRateProduct()
         },
+        updated(){
+            if(!this.value1[0] || !this.value1[1]){
+                this.allProduct = this.allProductBackup
+            }
+        },
         methods: {
+            onChangeDate(){
+                const startDate = this.value1[0]
+                const endDate = new Date(this.value1[1].setTime(this.value1[1].getTime() + 23 * 3600 * 1000+59*60*1000 + 59*1000));
+                if(this.value1[0] && this.value1[1]){
+                    const a = this.allProductBackup.filter(item => new Date(item.time) >= startDate &&  new Date(item.time) <= endDate)
+                    this.allProduct = a
+                }
+            },
+            isShowFormAdd(){
+                this.isShowAddProduct = false
+                this.productEdit = []
+                this.fetchProductAll()
+            },
             addProduct(){
+                this.isShowAddProduct = true
+                this.productEdit = []
+            },
+            editProduct(record){
+                this.productEdit = this.allProduct.filter(item => item.id == record.id)
                 this.isShowAddProduct = true
             },
             deleteProduct(item){
@@ -155,14 +189,6 @@ const PostsRepository = RepositoryFactory.communicationAPI('posts')
                 }
                 this.deleteRateProduct(idRate)
             },
-            // start() {
-            //     this.loading = true;
-            //     // ajax request after empty completing
-            //     setTimeout(() => {
-            //         this.loading = false;
-            //         this.selectedRowKeys = [];
-            //     }, 1000);
-            // },
             onSelectChange(selectedRowKeys) {
                 console.log('selectedRowKeys changed: ', selectedRowKeys);
                 this.selectedRowKeys = selectedRowKeys;
@@ -170,6 +196,7 @@ const PostsRepository = RepositoryFactory.communicationAPI('posts')
             async fetchProductAll(){
                 const {data} = await PostsRepository.getProductDetail();
                 this.allProduct = data
+                this.allProductBackup = data
             },
             async deleteProductId(id){
                 const {data} = await PostsRepository.deteleProductDetail(id);
@@ -183,11 +210,19 @@ const PostsRepository = RepositoryFactory.communicationAPI('posts')
                 const {data} = await PostsRepository.getRateProduct();
                 this.allRateProduct = data
             }
+            // start() {
+            //     this.loading = true;
+            //     // ajax request after empty completing
+            //     setTimeout(() => {
+            //         this.loading = false;
+            //         this.selectedRowKeys = [];
+            //     }, 1000);
+            // },
         },
     }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
     .toolbar-top{
         display: flex;
         align-items: center;

@@ -37,9 +37,12 @@
                             <div class="col-3">Số lượng <span class="obligatory">*</span></div>
                             <div class="col-3"><input type="number" v-model="amountProduct"></div>
                             <div class="col-3">Mô tả</div>
-                            <div class="col-3"><input type="button" :value="!isShowDescribe?'Thêm':'Hủy'" @click="isShowDescribe = !isShowDescribe"></div>
+                             <!-- :style="`--display: ${isShowDescribe} ? none:block`" -->
+                            <div class="col-3 button-describe" :style="`--display: ${!isShowDescribe ? 'none':'block'}`">
+                                <input type="button" class="" :value="!isShowDescribe?'Thêm':'Hủy'" @click="isShowDescribe = !isShowDescribe">
+                            </div>
                         </div>
-                        <div class="row">
+                        <div class="row" style="align-items: baseline">
                             <div class="col-3">Ảnh <span class="obligatory">*</span></div>
                             <div class="col-9">
                                 <input type="file" style="border: none" accept="image/jpeg" @change="uploadImage">
@@ -60,7 +63,8 @@
                 </div> -->
             </div>
             <div>
-                <input type="button" @click="onSave" value="Thêm">
+                <input v-if="productEdit.length == 0" type="button" @click="onSave" value="Thêm">
+                <input v-else type="button" @click="onEditProduct" value="Lưu">
                 <input style="margin-left: 8px" type="button" value="Hủy" @click="onCancel">
             </div>
         </div>
@@ -142,6 +146,19 @@ const PostsRepository = RepositoryFactory.communicationAPI('posts')
                 isShowDescribe: false
             }
         },
+        props: ['productEdit'],
+        created(){
+            if(this.productEdit){
+                this.nameProduct = this.productEdit[0].title
+                this.valueSelectType = this.productEdit[0].type
+                this.valueSelectTypeProduct = this.productEdit[0].type_product
+                this.priceProduct = this.productEdit[0].price
+                this.saleProduct = this.productEdit[0].sale
+                this.previewImage = this.productEdit[0].image
+                this.amountProduct = this.productEdit[0].product_amount
+            }
+            this.productEdit[0].describe.map((item, key) => this.describe[key].info = item.info)
+        },
         beforeUpdate(){
             this.productAdd = {
                 "type": this.valueSelectType,
@@ -153,12 +170,13 @@ const PostsRepository = RepositoryFactory.communicationAPI('posts')
                 "detail": this.valueSelectTypeProduct + '_' + this.valueSelectType,
                 "product_amount": Number(this.amountProduct),
                 "count": 1,
-                "quantity_sold": 0
+                "quantity_sold": 0,
+                "time": new Date()
                 // "describe": this.describe
             }
-            if(this.isShowDescribe){
+            // if(this.isShowDescribe){
                 Object.assign(this.productAdd, {"describe": this.describe})
-            }
+            // }
             // this.productAdd.push(this.describe)
             // Object.assign(this.productAdd,this.describe)
         },
@@ -204,6 +222,10 @@ const PostsRepository = RepositoryFactory.communicationAPI('posts')
                     this.$emit('isShowFormAdd');
                 }
             },
+            onEditProduct(){
+                this.updateProductDetail(this.productEdit[0].id,this.productAdd)
+                    this.$emit('isShowFormAdd');
+            },
             onCancel(){
                 this.$emit('isShowFormAdd');
             },
@@ -218,6 +240,10 @@ const PostsRepository = RepositoryFactory.communicationAPI('posts')
             },
             async addProductDetail(){
                 const {data} = await PostsRepository.createProductDetail(this.productAdd);
+                this.followData = data
+            },
+            async updateProductDetail(id, payload){
+                const {data} = await PostsRepository.updateProductDetail(id, payload);
                 this.followData = data
             }
         }
@@ -240,6 +266,7 @@ const PostsRepository = RepositoryFactory.communicationAPI('posts')
                     padding: 0;
                     >div{
                         margin: 6px 0px;
+                        align-items: center;
                         div>select,
                         div>input{
                             height: 28px;
@@ -259,6 +286,20 @@ const PostsRepository = RepositoryFactory.communicationAPI('posts')
         }
         .obligatory{
             color: red;
+        }
+        .button-describe{
+            position: relative;
+            &::after{
+                display: var(--display);
+                position: absolute;
+                content: "";
+                top: 50%;
+                right: 3px;
+                transform: translateY(-50%);
+                border-top: 8px solid transparent;
+                border-bottom: 8px solid transparent;
+                border-right: 5px solid #a90000;
+            }
         }
     }
 }

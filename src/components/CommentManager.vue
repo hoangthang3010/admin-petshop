@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="comment-manager">
         <h3>Quản lý bình luận sản phẩm</h3>
         <a-button v-show="isAddComment" type="primary" @click="isAddComment = !isAddComment">
             Thêm
@@ -17,10 +17,18 @@
                 </a-button>
             </div>
         </template>
-        <div style="margin-top: 10px">
-            <span>Có {{allCommentProduct.length}} bình luận</span>
-            <a-divider type="vertical" />
-            <span>Đã chọn {{selectedRowKeys.length}}</span>
+        <div class="toolbar-top" style="margin-top: 10px">
+            <div>
+                <span>Có {{allCommentProduct.length}} bình luận</span>
+                <a-divider type="vertical" />
+                <span>Đã chọn {{selectedRowKeys.length}}</span>
+                <a-divider type="vertical" />
+                <input type="button" @click="deleteCommentSelected" value="Xóa">
+            </div>
+            <div>
+                Thời gian: 
+                <date-picker v-model="value1" type="date" @change="onChangeDate" range placeholder="Chọn thời gian"></date-picker>
+            </div>
         </div>
         <a-table
             style="border-bottom: 1px solid #e8e8e8; margin-top: 10px"
@@ -204,6 +212,8 @@ for (let i = 0; i < 3; ++i) {
     time: 'Upgraded: 56',
   });
 }
+import DatePicker from 'vue2-datepicker';
+import 'vue2-datepicker/index.css';
 import { uuid } from 'vue-uuid'
 import {RepositoryFactory} from '../api/RepositoryFactory';
 const PostsRepository = RepositoryFactory.communicationAPI('posts')
@@ -214,6 +224,7 @@ export default {
             innerColumns,
             selectedRowKeys: [],
             allCommentProduct: [],
+            allCommentProductBackup: [],
             editingKey: '',
             editingKey1: '',
             innerData,
@@ -227,18 +238,39 @@ export default {
             productAll: [],
             cacheData: [],
             uuid: uuid.v4(),
+            value1: ['',''],
         }
     },
-    // watch:{
-    //     allCommentProduct(){
-    //         this.getCommentProduct()
-    //     }
-    // },
+    components: {DatePicker},
     created(){
         this.getCommentProduct()
         this.getProductDetail()
     },
+    updated(){
+        if(!this.value1[0] || !this.value1[1]){
+            this.allCommentProduct = this.allCommentProductBackup
+        }
+    },
     methods:{
+        deleteCommentSelected(){
+            this.allCommentProduct.forEach((item, key) =>{
+                this.selectedRowKeys.forEach(elem =>{
+                    if(key == elem){
+                        this.deteleCommentProductId(item.id)
+                    }
+                })
+            })
+            this.getCommentProduct()
+            this.selectedRowKeys = []
+        },
+        onChangeDate(){
+            const startDate = this.value1[0]
+            const endDate = new Date(this.value1[1].setTime(this.value1[1].getTime() + 23 * 3600 * 1000+59*60*1000 + 59*1000));
+            if(this.value1[0] && this.value1[1]){
+                const a = this.allCommentProductBackup.filter(item => new Date(item.time) >= startDate &&  new Date(item.time) <= endDate)
+                this.allCommentProduct = a
+            }
+        },
         handleCancelAdd(){
             this.idProductAdd=''
             this.contentProductAdd=''
@@ -439,7 +471,7 @@ export default {
             const target = newData.filter(item => item.id == record.id)[0];
             this.editingKey1 = '';
             if (target) {
-                Object.assign(target, this.cacheData.filter(item => item.id == record.id)[0]);
+                Object.assign(target, this.cacheData1.filter(item => item.id == record.id)[0]);
                 delete target.editable1;
                 this.replyComment.reply = newData;
             }
@@ -455,6 +487,7 @@ export default {
         async getCommentProduct(){
             const {data} = await PostsRepository.getCommentProduct();
             this.allCommentProduct = data
+            this.allCommentProductBackup = data
             this.cacheData = data.map(item => ({ ...item }));
         },
         async deteleCommentProductId(id){
@@ -481,13 +514,15 @@ export default {
 /* .editable-row-operations a {
   margin-right: 8px;
 } */
-.ant-modal{
-    width: 900px !important;
-    top: 40px !important;
-    .ant-modal-footer{
-        display: none;
+// .comment-manager{
+    .ant-modal{
+        width: 900px !important;
+        top: 40px !important;
+        .ant-modal-footer{
+            display: none;
+        }
     }
-}
+// }
 .add-comment{
     margin: 10px 10px 20px 0px !important;
     display: flex;

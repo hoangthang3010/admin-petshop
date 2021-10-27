@@ -17,10 +17,19 @@
                 </a-button>
             </div>
         </template>
-        <div style="margin-top: 10px">
-            <span>Có {{allRateProduct.length}} đánh giá</span>
-            <a-divider type="vertical" />
-            <span>Đã chọn {{selectedRowKeys.length}}</span></div>
+        <div class="toolbar-top" style="margin-top: 10px">
+            <div>
+                <span>Có {{allRateProduct.length}} đánh giá</span>
+                <a-divider type="vertical" />
+                <span>Đã chọn {{selectedRowKeys.length}}</span>
+                <a-divider type="vertical" />
+                <input type="button" @click="deleteRateSelected" value="Xóa">
+            </div>
+            <div>
+                Thời gian: 
+                <date-picker v-model="value1" type="date" @change="onChangeDate" range placeholder="Chọn thời gian"></date-picker>
+            </div>
+        </div>
         <a-table
             style="border-bottom: 1px solid #e8e8e8; margin-top: 10px"
             :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
@@ -91,6 +100,8 @@ const columns = [
     scopedSlots: { customRender: 'action' },
   },
 ];
+import DatePicker from 'vue2-datepicker';
+import 'vue2-datepicker/index.css';
 import {RepositoryFactory} from '../api/RepositoryFactory';
 const PostsRepository = RepositoryFactory.communicationAPI('posts')
 export default {
@@ -99,13 +110,16 @@ export default {
             columns,
             selectedRowKeys: [],
             allRateProduct: [],
+            allRateProductBackup: [],
             productAll: [],
             accountAll: [],
             isAddStar: true,
             countStar: 0,
-            idProductAdd: ''
+            idProductAdd: '',
+            value1: ['',''],
         }
     },
+    components: {DatePicker},
     async created(){
         await this.getAccount()
         await this.getProductDetail()
@@ -113,14 +127,40 @@ export default {
         this.getRateProduct()
         // },1000);
     },
+    updated(){
+        if(!this.value1[0] || !this.value1[1]){
+            this.allRateProduct = this.allRateProductBackup
+        }
+    },
     methods:{
+        async deleteRateSelected(){
+            this.allRateProduct.forEach((item, key) =>{
+                this.selectedRowKeys.forEach(elem =>{
+                    if(key == elem){
+                        this.deleteRateProducId(item.id)
+                    }
+                })
+            })
+            await this.getAccount()
+            await this.getProductDetail()
+            this.getRateProduct()
+            this.selectedRowKeys = []
+        },
+        onChangeDate(){
+            const startDate = this.value1[0]
+            const endDate = new Date(this.value1[1].setTime(this.value1[1].getTime() + 23 * 3600 * 1000+59*60*1000 + 59*1000));
+            if(this.value1[0] && this.value1[1]){
+                const a = this.allRateProductBackup.filter(item => new Date(item.time) >= startDate &&  new Date(item.time) <= endDate)
+                this.allRateProduct = a
+            }
+        },
         saveAddStar(){
             const check = this.productAll.map(item =>{
                     return item.id;
                 }).indexOf(Number(this.idProductAdd));
             const a = {
-                "productId": 1,
-                "userId": this.idProductAdd,
+                "productId": Number(this.idProductAdd),
+                "userId": 1,
                 "star": this.countStar,
                 "time": new Date()
             }
@@ -181,6 +221,7 @@ export default {
         async getRateProduct(){
             const {data} = await PostsRepository.getRateProduct();
             this.allRateProduct = data
+            this.allRateProductBackup = data
         },
         async deleteRateProducId(id){
             const {data} = await PostsRepository.deleteRateProduct(id);

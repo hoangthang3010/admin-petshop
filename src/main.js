@@ -28,6 +28,7 @@ import JwPagination from 'jw-vue-pagination';
 import VueFbCustomerChat from 'vue-fb-customer-chat'
 import VueApexCharts from 'vue-apexcharts'
 Vue.use(VueApexCharts)
+Vue.config.productionTip = false;
 
 Vue.component('apexchart', VueApexCharts)
 Vue.use(VueFbCustomerChat, {

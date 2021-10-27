@@ -58,8 +58,12 @@
                 </div>
             </div>
         </div>
+        <hr/>
+        <div>
+            <date-picker v-model="value1" type="date" @change="onChangeDate" range placeholder="Chọn thời gian"></date-picker>
+        </div>
         <div class="order">
-            <h3 style="background-color: #664F68; padding: 4px 10px; color: white">Đơn hàng</h3>
+            <h4 style="background-color: #664F68; padding: 6px 10px; color: white">Đơn hàng ({{allOrder.length}})</h4>
             <div class="item-in-order row">
                 <div class="box col-6">
                     <h4 class="title">Doanh số bán hàng trong 12 tháng</h4>
@@ -73,7 +77,7 @@
                     <h4 class="title">Top 5 sản phẩm bán chạy</h4>
                     <div>
                         <table>
-                            <tr class="row">
+                            <tr class="row" style="border-bottom: 1px solid #f6f6f6;">
                                 <th class="col-1">Top</th>
                                 <th class="col-9">ID - Tên sản phẩm</th>
                                 <th class="col-2">Số lượng</th>
@@ -83,13 +87,14 @@
                                 <td class="col-9">{{item.idProduct}} - {{productAll.filter(item1 => item1.id == item.idProduct)[0].title}}</td>
                                 <td class="col-2">{{item.total}}</td>
                             </tr>
+                            <div style="text-align: center; margin-top: 20px" v-show="bestSeller.length == 0">-Trống-</div>
                         </table>
                     </div>
                 </div>
             </div>
         </div>
         <div class="order">
-            <h3 style="background-color: #664F68; padding: 4px 10px; color: white">Người dùng</h3>
+            <h4 style="background-color: #664F68; padding: 6px 10px; color: white">Người dùng ({{accountAll.length}})</h4>
             <div class="item-in-order row">
                 <div class="box col-6">
                     <h4 class="title">Tỉ lệ giới tính</h4>
@@ -104,7 +109,7 @@
                         <h4 class="title">Top 5 khách hàng thân thiện</h4>
                         <div>
                             <table>
-                                <tr class="row">
+                                <tr class="row" style="border-bottom: 1px solid #f6f6f6;">
                                     <th class="col-2">Top</th>
                                     <th class="col-6">ID - Tên sản phẩm</th>
                                     <th class="col-4">Số tiền</th>
@@ -114,6 +119,7 @@
                                     <td class="col-6">{{item.idUser}} - {{accountAll.filter(item1 => item1.id == item.idUser)[0].username}}</td>
                                     <td class="col-4">{{item.total | filterPrice}}đ</td>
                                 </tr>
+                                <div style="text-align: center; margin-top: 20px" v-show="bestCustomer.length == 0">-Trống-</div>
                             </table>
                         </div>
                     </div>
@@ -127,11 +133,13 @@
 // import ApexCharts from 'apexcharts'
 import VueApexCharts from 'vue-apexcharts'
 // import LineChart from 'vue-chartjs'
+import DatePicker from 'vue2-datepicker';
+import 'vue2-datepicker/index.css';
 import './dashboard.scss'
 import {RepositoryFactory} from '../api/RepositoryFactory';
 const PostsRepository = RepositoryFactory.communicationAPI('posts')
     export default {
-        components: {apexchart: VueApexCharts, },
+        components: {apexchart: VueApexCharts, DatePicker },
         data() {
             return {
                 productAll: [],
@@ -168,7 +176,9 @@ const PostsRepository = RepositoryFactory.communicationAPI('posts')
                     fn: (a, b) => (b.total - a.total)
                 },
                 bestSeller: [],
-                bestCustomer: []
+                bestCustomer: [],
+                value1: ['',''],
+                allOrderBackup: []
             }
         },
         created(){
@@ -181,7 +191,18 @@ const PostsRepository = RepositoryFactory.communicationAPI('posts')
         },
         mounted(){
         },
+        updated(){
+            if(!this.value1[0] || !this.value1[1]){
+                this.allOrder = this.allOrderBackup
+                this.getOrder()
+            }
+        },
         methods: {
+            onChangeDate(){
+                const startDate = this.value1[0]
+                const endDate = new Date(this.value1[1].setTime(this.value1[1].getTime() + 23 * 3600 * 1000+59*60*1000 + 59*1000));
+                this.getOrder(startDate, endDate)
+            },
             async getProductDetail(){
                 const {data} = await PostsRepository.getProductDetail();
                 this.productAll = data
@@ -195,10 +216,11 @@ const PostsRepository = RepositoryFactory.communicationAPI('posts')
                 this.accountAll = data
                 this.seriesDonut = [data.filter(item => item.sex == 0).length, data.filter(item => item.sex == 1).length,  data.filter(item => item.sex == 2).length]
             },
-            async getOrder(timeS, timeE){
+            async getOrder(startDate, endDate){
                 const {data} = await PostsRepository.getOrder();
-                if(timeS && timeE){
-                    this.allOrder = data.filter(item => item.dateOrder > timeS && item.dateOrder < timeE)
+                this.allOrderBackup = data
+                if(startDate && endDate){
+                    this.allOrder = data.filter(item => new Date(item.dateOrder) >= startDate &&  new Date(item.dateOrder) <= endDate)
                 }
                 else this.allOrder = data
                 let newData = [

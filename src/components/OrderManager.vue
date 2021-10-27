@@ -32,7 +32,10 @@
             :data-source="allOrder"
             :scroll="{ y: 355 }"
             :pagination = false
-        >
+        > 
+            <!-- <p slot="expandedRowRender" slot-scope="record" style="margin: 0">
+                {{ record.listProductOrder }}
+            </p> -->
             <template
                 slot="typePay"
                 slot-scope="text"
@@ -104,6 +107,77 @@
                 </div>
             </template>
         </a-table>
+        <a-modal v-model="visible" title="Đơn hàng">
+            <div class="row" style="align-items: center">
+                <span class="col-2">Id đơn hàng: {{detailsProduct.id}}</span>
+                <span class="col-4">Trạng thái đơn hàng: {{detailsProduct.statusOrder == 'unconfirmed' ? 'Chưa xác nhận' : detailsProduct.statusOrder == 'confirmed' ? 'Đã xác nhận':'Đã giao'}}</span>
+                <a-button v-show="isAddProductOrder" type="primary" @click="isAddProductOrder = !isAddProductOrder">
+                    Thêm hàng cho đơn nỳ
+                </a-button>
+            </div>
+            <template>
+                <div class="add-comment row" v-show="!isAddProductOrder">
+                    <span class="col-1">{{!isAddProductOrder ? 'Thêm:' : ''}}</span>
+                    <a-input class="col-2" v-model="idAddProductOrder" placeholder="Id sản phẩm" />
+                    <a-input class="col-2" type="number" v-model="amountAddProductOrder" placeholder="Số lượng" />
+                    <a-button type="primary" @click="saveAddProductOrder">
+                        Lưu
+                    </a-button>
+                    <a-button type="danger" v-show="!isAddProductOrder" @click="handleCancelAdd1">
+                        Hủy
+                    </a-button>
+                </div>
+            </template>
+            <!-- <p>Có {{detailsProduct ? detailsProduct.length : '0'}} trả lời</p> -->
+            <a-table
+                style="border-bottom: 1px solid #e8e8e8; margin-top: 10px"
+                :row-selection="{ selectedRowKeys: selectedRowKeys1, onChange: onSelectChange1 }"
+                :columns="innerColumns"
+                :data-source="detailsProduct.listProductOrder"
+                :scroll="{ y: 300 }"
+                :pagination = false
+            >
+                <template
+                    v-for="col in ['idProduct', 'amount']"
+                    :slot="col"
+                    slot-scope="text, record"
+                >
+                    <div :key="col">
+                        <a-input
+                        v-if="record.editable1"
+                        style="margin: -5px 0"
+                        :value="text"
+                        @change="e => handleChange1(e.target.value, record, col)"
+                        />
+                        <template v-else>
+                        {{ text }}
+                        </template>
+                    </div>
+                </template>
+                <template slot="action" slot-scope="text, record">
+                    <div class="editable-row-operations">
+                        <span v-if="record.editable1">
+                            <a @click="() => save1(record)">Save</a>
+                            <a-divider type="vertical" />
+                            <a @click="() => cancel1(record)">Cancel</a>
+                        </span>
+                        <span v-else>
+                            <a :disabled="editingKey1 !== ''" @click="() => edit1(record)">Chỉnh sửa</a>
+                            <a-divider type="vertical" />
+                            <a @click="deleteProductOrder(record)">Xóa</a>
+                        </span>
+                    </div>
+                </template>
+            </a-table>
+            <template slot="footer">
+                <a-button key="back" @click="handleCancel">
+                Return
+                </a-button>
+                <a-button key="submit" type="primary" :loading="loading" @click="handleOk">
+                Submit
+                </a-button>
+            </template>
+        </a-modal>
     </div>
 </template>
 
@@ -186,6 +260,26 @@ const columns = [
     scopedSlots: { customRender: 'action' },
   },
 ];
+const innerColumns = [
+  {
+    title: 'Id sản phẩm',
+    dataIndex: 'idProduct',
+    // width: '15%',
+    scopedSlots: { customRender: 'idProduct' },
+  },
+  {
+    title: 'Số lượng',
+    dataIndex: 'amount',
+    scopedSlots: { customRender: 'amount' },
+    // width: '40%'
+  },
+  {
+    title: 'Hành động',
+    width: '16%',
+    key: 'action',
+    scopedSlots: { customRender: 'action' },
+  },
+];
 import DatePicker from 'vue2-datepicker';
 import 'vue2-datepicker/index.css';
 import {RepositoryFactory} from '../api/RepositoryFactory';
@@ -194,14 +288,24 @@ const PostsRepository = RepositoryFactory.communicationAPI('posts')
         data() {
             return {
                 columns,
+                innerColumns,
                 selectedRowKeys: [],
+                selectedRowKeys1: [],
                 editingKey: '',
+                editingKey1: '',
                 productAll: [],
                 accountAll: [],
+                detailsProduct: [],
                 cacheData: [],
+                cacheData1: [],
+                visible: false,
                 allOrder: [],
                 allOrderBackup: [],
                 value1: ['',''],
+                isAddProductOrder: true,
+                idAddProductOrder: '',
+                amountAddProductOrder: '',
+
                 // value1: [new Date(2019, 9, 8), new Date(2019, 9, 19)],
                 a: '',
                 sort:{
@@ -224,7 +328,17 @@ const PostsRepository = RepositoryFactory.communicationAPI('posts')
             this.getAccount()
             this.getOrder()
         },
+        updated(){
+            if(!this.value1[0] || !this.value1[1]){
+                this.allOrder = this.allOrderBackup
+            }
+        },
         methods: {
+            moreCommentProduct(record){
+                this.detailsProduct = record
+                this.visible = true
+                this.cacheData1 = record.listProductOrder.map(item => ({ ...item }));
+            },
             deleteOrderSelected(){
                 // console.log(this.allOrder);
                 // console.log(this.selectedRowKeys);
@@ -241,11 +355,15 @@ const PostsRepository = RepositoryFactory.communicationAPI('posts')
                 this.selectedRowKeys = []
             },
             onChangeDate(){
-                if(this.value1[0] || this.value1[1]){
-                    const a = this.allOrder.filter(item => item.dateOrder > this.value1[0].toJSON() &&  item.dateOrder < this.value1[1].toJSON())
+                const startDate = this.value1[0]
+                const endDate = new Date(this.value1[1].setTime(this.value1[1].getTime() + 23 * 3600 * 1000+59*60*1000 + 59*1000));
+                // this.allOrder.map(item => console.log(new Date(item.dateOrder)))
+                console.log(startDate);
+                console.log(endDate);
+                if(this.value1[0] && this.value1[1]){
+                    const a = this.allOrderBackup.filter(item => new Date(item.dateOrder) >= startDate &&  new Date(item.dateOrder) <= endDate)
                     this.allOrder = a
                 }
-                else this.allOrder = this.allOrderBackup
             },
             onOk(value) {
             console.log('onOk: ', value);
@@ -278,6 +396,14 @@ const PostsRepository = RepositoryFactory.communicationAPI('posts')
                     this.allOrder = newData;
                 }
             },
+            handleChange1(value, record, column) {
+                const newData = [...this.detailsProduct.listProductOrder];
+                const target = newData.filter(item => item.id === record.id)[0];
+                if (target) {
+                    target[column] = Number(value);
+                    this.detailsProduct.listProductOrder = newData;
+                }
+            },
             cancel(record) {
                 const newData = [...this.allOrder];
                 const target = newData.filter(item => item.id === record.id)[0];
@@ -286,6 +412,16 @@ const PostsRepository = RepositoryFactory.communicationAPI('posts')
                     Object.assign(target, this.cacheData.filter(item => item.id === record.id)[0]);
                     delete target.editable;
                     this.allOrder = newData;
+                }
+            },
+            cancel1(record) {
+                const newData = [...this.detailsProduct.listProductOrder];
+                const target = newData.filter(item => item.id == record.id)[0];
+                this.editingKey1 = '';
+                if (target) {
+                    Object.assign(target, this.cacheData1.filter(item => item.id == record.id)[0]);
+                    delete target.editable1;
+                    this.detailsProduct.listProductOrder = newData;
                 }
             },
             edit(record) {
@@ -297,13 +433,98 @@ const PostsRepository = RepositoryFactory.communicationAPI('posts')
                     this.allOrder = newData;
                 }
             },
+            edit1(record) {
+                const newData = [...this.detailsProduct.listProductOrder];
+                const target = newData.filter(item => item.id === record.id)[0];
+                this.editingKey1 = record.id;
+                if (target) {
+                    target.editable1 = true;
+                    this.detailsProduct.listProductOrder = newData;
+                }
+            },
+            save1(record) {
+                const newData = [...this.detailsProduct.listProductOrder];
+                const newCacheData = [...this.cacheData1];
+                const target = newData.filter(item => item.id == record.id)[0];
+                const targetCache = newCacheData.filter(item => item.id == record.id)[0];
+                if (target && targetCache) {
+                    delete target.editable1;
+                    this.detailsProduct.listProductOrder = newData;
+                    this.updateOrderId(this.detailsProduct.id, this.detailsProduct)
+
+                    this.productAll.forEach(item =>{
+                        target.forEach(elem =>{
+                            if(item.id == elem.idProduct){
+                            const newCount = item.product_amount - elem.amount
+                            const newQuantitySold = item.quantity_sold + elem.amount
+                            const newElem = {
+                                ...item,
+                                product_amount: newCount,
+                                quantity_sold: newQuantitySold
+                            }
+                            this.updateProductDetail(item.id, newElem)
+                            }
+                        })
+                    })
+
+                    this.getOrder()
+                    Object.assign(targetCache, target);
+                    this.cacheData1 = newCacheData;
+                }
+                this.editingKey1 = '';
+                console.log(record.id);
+            },
+            saveAddProductOrder(){
+                if(this.amountAddProductOrder && this.idAddProductOrder){
+                    const a = {
+                        "id": [...Array(30)].map(() => Math.random().toString(36)[2]).join(''),
+                        "idProduct": Number(this.idAddProductOrder),
+                        "amount": Number(this.amountAddProductOrder),
+                    }
+                    const newData = [...this.detailsProduct.listProductOrder];
+                    const newCacheData = [...this.cacheData1];
+                    this.detailsProduct.listProductOrder = newData.concat(a);
+                    // this.detailsProduct = [...this.detailsProduct.listProductOrder]
+                    this.updateOrderId(this.detailsProduct.id, this.detailsProduct)
+                    this.getOrder()
+                    this.cacheData1 = newCacheData;
+                    this.editingKey1 = '';
+                    this.idAddProductOrder = ''
+                    this.amountAddProductOrder = ''
+                    this.isAddProductOrder = true
+                }
+                else{
+                    this.$notification['error']({
+                        message: 'Thêm thất bại',
+                        description:
+                        'Vui lòng nhập nội dung',
+                        duration: 2,
+                        style: {
+                            top: `75px`,
+                            marginBottom: '10px'
+                        },
+                    });
+                }
+            },
             deleteOrder(item){
                 this.updateOrderId(item.id)
                 this.getOrder()
             },
+            deleteProductOrder(record){
+                let newData = [...this.detailsProduct.listProductOrder];
+                const newCacheData = [...this.cacheData1];
+                this.detailsProduct.listProductOrder = newData.filter(item => item.id !== record.id)
+                newData = this.detailsProduct.listProductOrder
+                this.updateOrderId(this.detailsProduct.id, this.detailsProduct)
+                this.getOrder()
+                this.cacheData1 = newCacheData;
+                this.editingKey1 = '';
+            },
             onSelectChange(selectedRowKeys) {
-                console.log('selectedRowKeys changed: ', selectedRowKeys);
                 this.selectedRowKeys = selectedRowKeys;
+            },
+            onSelectChange1(selectedRowKeys1) {
+                this.selectedRowKeys1 = selectedRowKeys1;
             },
             async getOrder(){
                 const {data} = await PostsRepository.getOrder();
@@ -321,6 +542,10 @@ const PostsRepository = RepositoryFactory.communicationAPI('posts')
             },
             async getProductDetail(){
                 const {data} = await PostsRepository.getProductDetail();
+                this.productAll = data
+            },
+            async updateProductDetail(id, payload){
+                const {data} = await PostsRepository.getProductDetail(id, payload);
                 this.productAll = data
             },
             async getAccount(){
