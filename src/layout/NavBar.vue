@@ -51,6 +51,22 @@
               </span>
           </router-link>
         </a-menu-item>
+        <a-menu-item key="6">
+          <router-link to="/race">
+              <a-icon type="race" />
+              <span>
+                  Quản lý giống nòi
+              </span>
+          </router-link>
+        </a-menu-item>
+        <a-menu-item key="7">
+          <router-link to="/slides">
+              <a-icon type="slides" />
+              <span>
+                  Quản lý slide
+              </span>
+          </router-link>
+        </a-menu-item>
       </a-menu>
     </a-layout-sider>
     <a-layout>

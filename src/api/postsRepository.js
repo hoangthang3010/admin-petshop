@@ -5,6 +5,8 @@ const productDetail = "/productDetail"
 const rateProduct = "/rateProduct"
 const commentProduct = "/commentProduct"
 const orderProduct = "/orderProduct"
+const race = "/race"
+const slide = "/slide"
 export default {
     getAccount(){
         return Repository.get(`${account}`);
@@ -72,6 +74,30 @@ export default {
     },
     updateOrderId(idOrderProduct, payload){
         return Repository.put(`${orderProduct}/${idOrderProduct}`, payload)
+    },
+    getRace(){
+        return Repository.get( `${race}`)
+    }, 
+    createRace(payload){
+        return Repository.post( `${race}`, payload)
+    },
+    deteleRace(idRace){
+        return Repository.delete(`${race}/${idRace}`)
+    },
+    updateRaceId(idRace, payload){
+        return Repository.put(`${race}/${idRace}`, payload)
+    },
+    getSlide(){
+        return Repository.get( `${slide}`)
+    }, 
+    createSlide(payload){
+        return Repository.post( `${slide}`, payload)
+    },
+    deteleSlide(idRace){
+        return Repository.delete(`${slide}/${idSlide}`)
+    },
+    updateSlideId(idRace, payload){
+        return Repository.put(`${slide}/${idSlide}`, payload)
     },
 
 }

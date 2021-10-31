@@ -4,6 +4,8 @@ import RateManager from '../components/RateManager.vue'
 import CommentManager from '../components/CommentManager.vue'
 import UserManager from '../components/UserManager.vue'
 import OrderManager from '../components/OrderManager.vue'
+import RaceManager from '../components/RaceManager.vue'
+import SlideManager from '../components/SlideManager.vue'
 
 export const routes = [
     { path: '/', redirect: '/admin'},
@@ -12,5 +14,7 @@ export const routes = [
     { path: '/rateproduct', name: 'rateproduct', component: RateManager},
     { path: '/commentproduct', name: 'commentproduct', component: CommentManager},
     { path: '/user', name: 'user', component: UserManager},
-    { path: '/order', name: 'order ', component: OrderManager}
+    { path: '/order', name: 'order ', component: OrderManager},
+    { path: '/race', name: 'race ', component: RaceManager},
+    { path: '/slide', name: 'slide ', component: SlideManager}
 ]

@@ -3,15 +3,39 @@
         <h3>Quản lý tài khoản</h3>
         <div>
             <select id="cars" class="select-type" name="cars" v-model="valueSelect">
-                <option value="all">Khách hàng</option>
-                <option value="dog">Quản trị viện</option>
+                <option value="client">Khách hàng</option>
+                <option value="admin">Quản trị viên</option>
             </select>
+            <a-button v-show="valueSelect == 'admin' && isAddAccount" type="primary" @click="isAddAccount = !isAddAccount">
+                Thêm
+            </a-button>
+            <!-- <template> -->
+                <div class="add-comment row add-account" v-show="!isAddAccount && valueSelect=='admin'">
+                    <span>{{!isAddAccount ? 'Thêm tài khoản admin: ' : ''}}</span>
+                    <a-input class="col-2" v-model="usernameAddAccount" placeholder="Tên đăng nhập" />
+                    <a-input class="col-2" v-model="emailAddAccount" placeholder="Email" />
+                    <a-input-password class="col-2" v-model="passwordAddAccount" placeholder="Mật khẩu" />
+                    <a-input-password class="col-2" v-model="rePasswordAddAccount" placeholder="Nhập lại mật khẩu" />
+                    <input type="file" accept="image/jpeg" @change="uploadImageAddAccount">
+                    <img v-show="imageAddAccount"  class="image-add" :src="imageAddAccount" alt="Ảnh đại diện">
+                    <div class="col-10"></div>
+                    <div class="button-add-account">
+                        <a-button type="primary" @click="saveAddAccount">
+                            Lưu
+                        </a-button>
+                        <a-button type="danger" v-show="!isAddAccount" @click="handleCancelAdd">
+                            Hủy
+                        </a-button>
+                    </div>
+                </div>
+            <!-- </template> -->
         </div>
+        <div style="display: none">{{allAccount.length}}</div>
         <a-table
             style="border-bottom: 1px solid #e8e8e8"
             :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
             :columns="columns"
-            :data-source="allAccount"
+            :data-source="accountfilter"
             :scroll="{ y: 355 }"
             :pagination = false
         >
@@ -28,7 +52,7 @@
                     @change="e => handleChange(e.target.value, record, col)"
                     />
                     <template v-else>
-                    {{ text }}
+                    {{ text ? text : '-Trống-'}}
                     </template>
                 </div>
             </template>
@@ -36,7 +60,8 @@
                 slot="status"
                 slot-scope="text, record"
             >
-                <div :key="record.editable">
+            <!-- {{record.id}}-{{record.status}} -->
+                <div :key="record.id">
                     <template>
                         <a-switch 
                             v-if="record.status == 'activate'" 
@@ -63,7 +88,7 @@
                     valueType="format"
                 ></date-picker>
                 <template v-else>
-                {{text}}
+                {{text ? text : '-Trống-'}}
                 </template>
             </template>
             <template
@@ -86,7 +111,7 @@
                     </a-select-option>
                 </a-select>
                 <template v-else>
-                {{ text == '0' ? 'Nam' : text == '1' ? 'Nữ':'Khác'}}
+                {{ text == '0' ? 'Nam' : text == '1' ? 'Nữ' : text == '2' ? 'Khác' : '-Trống-'}}
                 </template>
             </template>
             <template
@@ -214,7 +239,7 @@ const columns = [
     width: '11%'
   },
   {
-    title: 'Thời gian',
+    title: 'Giới tính',
     dataIndex: 'sex',
     scopedSlots: { customRender: 'sex' },
     width: 90,
@@ -288,14 +313,41 @@ export default {
             visible: false,
             replyComment: [],
             cacheData: [],
-            changeImage: true
+            changeImage: true,
+            valueSelect: "client",
+            isAddAccount: true,
+            usernameAddAccount: '',
+            emailAddAccount: '',
+            imageAddAccount: null,
+            passwordAddAccount: '',
+            rePasswordAddAccount: ''
         }
     },
     created(){
         this.getCommentProduct()
         this.getAccount()
     },
+    watch:{
+        allAccount(){
+            this.accountfilter()
+        }
+    },
+    computed:{
+        accountfilter(){
+                if(this.valueSelect == 'client'){
+                    return this.allAccount.filter(item => item.role == 'user')
+                
+                }
+                else return this.allAccount.filter(item => item.role == 'admin')
+            },
+    },
     methods:{
+        handleCancelAdd(){
+            this.usernameAddAccount = ''
+            this.emailAddAccount = ''
+            this.imageAddAccount = null
+            this.isAddAccount = true
+        },
         onChangeImage(){
             this.changeImage = false
             this.$forceUpdate()
@@ -397,7 +449,7 @@ export default {
                     },
                 })
             }
-            else if(!phoneValidate.test(record.phonenumber)){
+            else if(!phoneValidate.test(record.phonenumber) && this.valueSelect == "user"){
                 this.$notification['error']({
                     message: 'Số điện thoại không đúng định dạng',
                     description:
@@ -418,6 +470,7 @@ export default {
                     this.allAccount = newData;
                     Object.assign(targetCache, target);
                     this.cacheData = newCacheData;
+                    this.$forceUpdate()
                 }
                 this.editingKey = '';
                 this.changeImage = false
@@ -447,6 +500,87 @@ export default {
             console.log('selectedRowKeys changed: ', selectedRowKeys);
             this.selectedRowKeys = selectedRowKeys;
         },
+        saveAddAccount(){
+            const checkUsername = this.allAccount.map(item =>{
+                    return item.username;
+                }).indexOf(this.usernameAddAccount);
+            const checkEmail = this.allAccount.map(item =>{
+                    return item.email;
+                }).indexOf(this.emailAddAccount);
+            const a = {
+                "username": this.usernameAddAccount,
+                "email": this.emailAddAccount,
+                "password": this.passwordAddAccount,
+                "time": new Date(),
+                "role": this.valueSelect,
+                "status": "activate",
+                "avatar": this.imageAddAccount ? this.imageAddAccount : "https://www.unmc.edu/cihc/_images/faculty/default.jpg"
+            }
+            if(!this.usernameAddAccount || !this.emailAddAccount || !this.passwordAddAccount || !this.rePasswordAddAccount){
+                this.$notification['error']({
+                    message: 'Thêm thất bại',
+                    description:
+                    'Vui lòng nhập đầy đủ thông tin',
+                    duration: 2,
+                    style: {
+                        top: `75px`,
+                        marginBottom: '10px'
+                    },
+                });
+            }
+            else if(Number(checkUsername) > -1){
+                this.$notification['error']({
+                    message: 'Thêm thất bại',
+                    description:
+                    'Tên đăng nhập tồn tại',
+                    duration: 2,
+                    style: {
+                        top: `75px`,
+                        marginBottom: '10px'
+                    },
+                });
+            }
+            else if(Number(checkEmail) > -1){
+                this.$notification['error']({
+                    message: 'Thêm thất bại',
+                    description:
+                    'Email đã tồn tại',
+                    duration: 2,
+                    style: {
+                        top: `75px`,
+                        marginBottom: '10px'
+                    },
+                });
+            }
+            else if(this.rePasswordAddAccount != this.passwordAddAccount){
+                this.$notification['error']({
+                    message: 'Thêm thất bại',
+                    description:
+                    'Mật khẩu không khớp',
+                    duration: 2,
+                    style: {
+                        top: `75px`,
+                        marginBottom: '10px'
+                    },
+                });
+            }
+            else{
+                this.createAccount(a)
+                this.getAccount(this.valueSelect)
+                this.isAddAccount = true
+                this.$notification['success']({
+                    message: 'Thêm tài khoản thành công',
+                    duration: 2,
+                    style: {
+                        top: `75px`,
+                        marginBottom: '10px'
+                    },
+                })
+                this.usernameAddAccount = ''
+                this.emailAddAccount = ''
+                this.imageAddAccount = null
+            }
+        },
         uploadImage(e, record){
             const newData = [...this.allAccount];
             const target = newData.filter(item => item.id == record.id)[0];
@@ -455,6 +589,15 @@ export default {
             reader.readAsDataURL(image);
             reader.onload = e =>{
                 target.avatar = e.target.result;
+            };
+        },
+        uploadImageAddAccount(e){
+            const image = e.target.files[0];
+            const reader = new FileReader();
+            reader.readAsDataURL(image);
+            reader.onload = e =>{
+                this.imageAddAccount = e.target.result;
+                console.log(this.imageAddAccount);
             };
         },
         async getCommentProduct(){
@@ -468,13 +611,17 @@ export default {
         },
         async getAccount(){
             const {data} = await PostsRepository.getAccount();
-            this.allAccount = data.filter(item => item.role == 'user')
             this.cacheData = data.map(item => ({ ...item }));
+            this.allAccount = data
             // 
         },
         async updateAccount(id, payload){
             const {data} = await PostsRepository.updateAccount(id, payload);
-            this.allAccount = data.filter(item => item.role == 'user')
+            this.allAccount = data
+        },
+        async createAccount(payload){
+            const {data} = await PostsRepository.createAccount(payload);
+            this.allAccount = data
         },
     }
 }
@@ -485,8 +632,32 @@ export default {
   margin-right: 8px;
 } */
 .user-manager{
+    .select-type{
+        width: 100px;
+        margin-bottom: 10px;
+        margin-right: 10px;
+    }
     .ant-table-fixed-header > .ant-table-content > .ant-table-scroll > .ant-table-body{
         max-height: 60vh !important;
+    }
+    .add-account{
+        position: relative;
+        justify-content: space-between;
+    }
+    .image-add{
+        position: absolute;
+        bottom: 120%;
+        width: 90px;
+        height: 90px;
+        right: 35%;
+    }
+    .button-add-account{
+        margin-top: 10px;
+        display: flex;
+        flex: end;
+    }
+    .ant-input-affix-wrapper .ant-input-suffix{
+        right: 24px !important
     }
 }
 .ant-modal{
