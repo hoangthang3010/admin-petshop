@@ -30,7 +30,7 @@
           </router-link>
         </a-menu-item>
         <a-menu-item key="3">
-          <router-link to="/order">
+          <router-link to="/user">
             <a-icon type="upload" />
             <span>Quản lý người dùng</span>
           </router-link>

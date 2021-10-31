@@ -192,7 +192,7 @@ const PostsRepository = RepositoryFactory.communicationAPI('posts')
         mounted(){
         },
         updated(){
-            if(!this.value1[0] || !this.value1[1]){
+            if(!this.value1[0] && !this.value1[1]){
                 this.allOrder = this.allOrderBackup
                 this.getOrder()
             }
@@ -256,6 +256,7 @@ const PostsRepository = RepositoryFactory.communicationAPI('posts')
                         return acc;
                 },{}))
                 this.bestCustomer = result1
+                this.value1[1] = new Date().toJSON()
             },
             async getRateProduct(){
                 const {data} = await PostsRepository.getRateProduct();

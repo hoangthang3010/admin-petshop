@@ -12,5 +12,5 @@ export const routes = [
     { path: '/rateproduct', name: 'rateproduct', component: RateManager},
     { path: '/commentproduct', name: 'commentproduct', component: CommentManager},
     { path: '/user', name: 'user', component: UserManager},
-    { path: '/order', name: 'user', component: OrderManager}
+    { path: '/order', name: 'order ', component: OrderManager}
 ]
