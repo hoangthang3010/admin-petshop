@@ -11,7 +11,7 @@
                     <span>Số lượng tài khoản khách hàng</span>
                 </div>
                 <div class="number-box">
-                    <span class="number">{{productAll.length}}</span>
+                    <span class="number">{{accountAll.length}}</span>
                     <span class="text"> người</span>
                 </div>
             </div>
@@ -25,7 +25,7 @@
                     <span>Số lượng sản phẩm hiện có</span>
                 </div>
                 <div class="number-box">
-                    <span class="number">{{accountAll.length}}</span>
+                    <span class="number">{{productAll.length}}</span>
                     <span class="text"> sản phẩm</span>
                 </div>
             </div>
@@ -213,8 +213,8 @@ const PostsRepository = RepositoryFactory.communicationAPI('posts')
             },
             async getAccount(){
                 const {data} = await PostsRepository.getAccount();
-                this.accountAll = data
-                this.seriesDonut = [data.filter(item => item.sex == 0).length, data.filter(item => item.sex == 1).length,  data.filter(item => item.sex == 2).length]
+                this.accountAll = data.filter(item => item.role == 'user')
+                this.seriesDonut = [this.accountAll.filter(item => item.sex == 0).length, this.accountAll.filter(item => item.sex == 1).length,  this.accountAll.filter(item => item.sex == 2).length]
             },
             async getOrder(startDate, endDate){
                 const {data} = await PostsRepository.getOrder();

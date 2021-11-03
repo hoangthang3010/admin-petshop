@@ -1,7 +1,7 @@
 <template>
     <div class="add-product" :style="!isShowDescribe?'left: 26%':''">
         <div class="container" :style="`width: ${isShowDescribe ? '1200px': '600px'}`">
-            <h4>Thêm sản phẩm</h4>
+            <h4>{{productEdit ? 'Sửa' : 'Thêm'}} sản phẩm</h4>
             <div>
                 <div class="row">
                     <div :class="isShowDescribe ? 'col-6' : 'col-12'" style="min-height: 390px; margin-bottom: 10px">

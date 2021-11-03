@@ -5,11 +5,11 @@
           <router-link to="/">
             <font-awesome-icon 
                 class="header__top__mid__clientcare__icon"
-                :icon="['fas', 'fa-home']" 
+                :icon="['fa', 'home']" 
                 color="white"
                 />
-            <span>Hello</span>
-            <span>Thắng</span>
+            <span> Hello</span>
+            <span> Thắng</span>
           </router-link>
       </div>
       <a-menu theme="dark" mode="inline" :default-selected-keys="['1']">
@@ -45,7 +45,7 @@
         </a-menu-item>
         <a-menu-item key="5">
           <router-link to="/commentproduct">
-              <a-icon type="user" />
+            <a-icon type="video-camera" />
               <span>
                   Quản lý bình luận
               </span>
@@ -53,17 +53,33 @@
         </a-menu-item>
         <a-menu-item key="6">
           <router-link to="/race">
-              <a-icon type="race" />
+            <a-icon type="user" />
               <span>
                   Quản lý giống nòi
               </span>
           </router-link>
         </a-menu-item>
         <a-menu-item key="7">
-          <router-link to="/slides">
-              <a-icon type="slides" />
+          <router-link to="/typeproduct">
+            <a-icon type="upload" />
+              <span>
+                  Quản lý loại sản phẩm
+              </span>
+          </router-link>
+        </a-menu-item>
+        <a-menu-item key="8">
+          <router-link to="/slide">
+              <a-icon type="video-camera" />
               <span>
                   Quản lý slide
+              </span>
+          </router-link>
+        </a-menu-item>
+        <a-menu-item key="9">
+          <router-link to="/warehouse">
+              <a-icon type="user" />
+              <span>
+                  Quản lý kho hàng
               </span>
           </router-link>
         </a-menu-item>

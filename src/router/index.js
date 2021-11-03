@@ -6,6 +6,8 @@ import UserManager from '../components/UserManager.vue'
 import OrderManager from '../components/OrderManager.vue'
 import RaceManager from '../components/RaceManager.vue'
 import SlideManager from '../components/SlideManager.vue'
+import TypeProductManager from '../components/TypeProductManager.vue'
+import WarehouseManager from '../components/WarehouseManager.vue'
 
 export const routes = [
     { path: '/', redirect: '/admin'},
@@ -16,5 +18,7 @@ export const routes = [
     { path: '/user', name: 'user', component: UserManager},
     { path: '/order', name: 'order ', component: OrderManager},
     { path: '/race', name: 'race ', component: RaceManager},
-    { path: '/slide', name: 'slide ', component: SlideManager}
+    { path: '/slide', name: 'slide ', component: SlideManager},
+    { path: '/typeproduct', name: 'typeproduct ', component: TypeProductManager},
+    { path: '/warehouse', name: 'warehouse ', component: WarehouseManager}
 ]

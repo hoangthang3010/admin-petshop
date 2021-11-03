@@ -112,7 +112,7 @@
                 <span class="col-2">Id đơn hàng: {{detailsProduct.id}}</span>
                 <span class="col-4">Trạng thái đơn hàng: {{detailsProduct.statusOrder == 'unconfirmed' ? 'Chưa xác nhận' : detailsProduct.statusOrder == 'confirmed' ? 'Đã xác nhận':'Đã giao'}}</span>
                 <a-button v-show="isAddProductOrder" type="primary" @click="isAddProductOrder = !isAddProductOrder">
-                    Thêm hàng cho đơn nỳ
+                    Thêm hàng cho đơn này
                 </a-button>
             </div>
             <template>

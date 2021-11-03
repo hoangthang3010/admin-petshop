@@ -102,7 +102,7 @@
             <p>Có {{replyComment.reply ? replyComment.reply.length : '0'}} trả lời</p>
             <a-table
                 style="border-bottom: 1px solid #e8e8e8"
-                :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
+                :row-selection="{ selectedRowKeys: selectedRowKeys1, onChange: onSelectChange1 }"
                 :columns="innerColumns"
                 :data-source="replyComment.reply"
                 :scroll="{ y: 300 }"
@@ -223,6 +223,7 @@ export default {
             columns,
             innerColumns,
             selectedRowKeys: [],
+            selectedRowKeys1: [],
             allCommentProduct: [],
             allCommentProductBackup: [],
             editingKey: '',
@@ -483,6 +484,10 @@ export default {
         onSelectChange(selectedRowKeys) {
             console.log('selectedRowKeys changed: ', selectedRowKeys);
             this.selectedRowKeys = selectedRowKeys;
+        },
+        onSelectChange1(selectedRowKeys) {
+            console.log('selectedRowKeys changed: ', selectedRowKeys);
+            this.selectedRowKeys1 = selectedRowKeys;
         },
         async getCommentProduct(){
             const {data} = await PostsRepository.getCommentProduct();

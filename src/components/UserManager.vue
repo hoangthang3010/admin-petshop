@@ -60,7 +60,6 @@
                 slot="status"
                 slot-scope="text, record"
             >
-            <!-- {{record.id}}-{{record.status}} -->
                 <div :key="record.id">
                     <template>
                         <a-switch 

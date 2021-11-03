@@ -6,7 +6,9 @@ const rateProduct = "/rateProduct"
 const commentProduct = "/commentProduct"
 const orderProduct = "/orderProduct"
 const race = "/race"
-const slide = "/slide"
+const slide = "/slides"
+const typeProduct = "/productAll"
+const warehouse = "/warehouse"
 export default {
     getAccount(){
         return Repository.get(`${account}`);
@@ -93,11 +95,35 @@ export default {
     createSlide(payload){
         return Repository.post( `${slide}`, payload)
     },
-    deteleSlide(idRace){
+    deteleSlide(idSlide){
         return Repository.delete(`${slide}/${idSlide}`)
     },
-    updateSlideId(idRace, payload){
+    updateSlideId(idSlide, payload){
         return Repository.put(`${slide}/${idSlide}`, payload)
+    },
+    getTypeProduct(){
+        return Repository.get( `${typeProduct}`)
+    }, 
+    createTypeProduct(payload){
+        return Repository.post( `${typeProduct}`, payload)
+    },
+    deteleTypeProduct(idTypeProduct){
+        return Repository.delete(`${typeProduct}/${idTypeProduct}`)
+    },
+    updateTypeProductId(idTypeProduct, payload){
+        return Repository.put(`${typeProduct}/${idTypeProduct}`, payload)
+    },
+    getWarehouse(){
+        return Repository.get( `${warehouse}`)
+    }, 
+    createWarehouse(payload){
+        return Repository.post( `${warehouse}`, payload)
+    },
+    deteleWarehouse(idTypeProduct){
+        return Repository.delete(`${warehouse}/${idTypeProduct}`)
+    },
+    updateWarehouseId(idTypeProduct, payload){
+        return Repository.put(`${warehouse}/${idTypeProduct}`, payload)
     },
 
 }
