@@ -1,9 +1,6 @@
 <template>
     <div>
         <h3>Quản lý loại sản phẩm</h3>
-        <a-button type="primary" @click="updateWarehouse">
-            Thêm
-        </a-button>
         <!-- <template>
             <div class="add-star add-comment row" v-show="!isAddTypeProduct">
                 <span class="col-2">{{!isAddTypeProduct ? 'Thêm loại sản phẩm:' : ''}}</span>
@@ -24,6 +21,10 @@
                 <span>Đã chọn {{selectedRowKeys.length}}</span>
                 <a-divider type="vertical" />
                 <input type="button" @click="deleteRaceSelected" value="Xóa">
+                <a-divider type="vertical" />
+                <a-button type="primary" @click="updateWarehouse">
+                    Cập nhật
+                </a-button>
             </div>
             <div>
                 Thời gian: 
@@ -196,22 +197,25 @@ export default {
     },
     methods:{
         updateWarehouse(){
+            const a = []
             this.productAll.forEach(item =>{
-              this.allWarehouse.forEach(elem =>{
-                if(item.id !== elem.idProduct){
-                    const date = new Date()
-                    const newElem = {
-                        idProduct: item.id,
-                        time: date,
-                        listImportGoods: [],
-                        listExportGoods: []
-                    }
-                    this.allWarehouse.push(newElem)
-                    // this.createWarehouse(newElem)
+                const date = new Date()
+                const newElem = {
+                    idProduct: item.id,
+                    time: date.toJSON(),
+                    listImportGoods: [],
+                    listExportGoods: []
                 }
-              })
+                a.push(newElem)
             })
-            console.log(this.allWarehouse);
+            let b = [...this.allWarehouse, ...a]
+            this.allWarehouse.forEach(elem =>{
+                b = b.filter(item => item.idProduct !== elem.idProduct)
+            })
+            b.forEach(item => {
+                this.createWarehouse(item)
+                this.getWarehouse()
+            })
         },
         handleCancelAdd(){
             this.amountImport = ''
