@@ -354,7 +354,8 @@ export default {
             const a = {
                 "titleType": this.titleTypeProductAdd.trim(),
                 "name": this.nameTypeProductAdd.toLowerCase().trim(),
-                "time": new Date()
+                "time": new Date(),
+                "type": []
             }
             if(!this.titleTypeProductAdd || !this.nameTypeProductAdd){
                 this.$notification['error']({

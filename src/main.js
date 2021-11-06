@@ -25,17 +25,17 @@ import firebase from "firebase";
 // import { DatePicker } from 'ant-design-vue';
 // Vue.use(DatePicker);
 import JwPagination from 'jw-vue-pagination';
-import VueFbCustomerChat from 'vue-fb-customer-chat'
+// import VueFbCustomerChat from 'vue-fb-customer-chat'
 import VueApexCharts from 'vue-apexcharts'
 Vue.use(VueApexCharts)
 Vue.config.productionTip = false;
 
 Vue.component('apexchart', VueApexCharts)
-Vue.use(VueFbCustomerChat, {
-  page_id: 101051212340029, //  change 'null' to your Facebook Page ID,
-  theme_color: '#0A7CFF', // theme color in HEX
-  locale: 'en_US', // default 'en_US'
-})
+// Vue.use(VueFbCustomerChat, {
+//   page_id: 101051212340029, //  change 'null' to your Facebook Page ID,
+//   theme_color: '#0A7CFF', // theme color in HEX
+//   locale: 'en_US', // default 'en_US'
+// })
 Vue.use(UUID);
 Vue.use(Bus)
 Vue.component('VueSlider', VueSlider)

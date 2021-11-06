@@ -219,7 +219,7 @@ const PostsRepository = RepositoryFactory.communicationAPI('posts')
                         },
                     });
                     this.addProductDetail()
-                    this.$emit('isShowFormAdd');
+                    this.$emit('isShowFormAdd', 'update');
                 }
             },
             onEditProduct(){

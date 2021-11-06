@@ -106,7 +106,8 @@ const PostsRepository = RepositoryFactory.communicationAPI('posts')
                 allRateProduct: [],
                 value1: ['',''],
                 allProductBackup: [],
-                productEdit: []
+                productEdit: [],
+                allWarehouse: []
             }
         },
         components: {AddProduct, DatePicker},
@@ -150,11 +151,33 @@ const PostsRepository = RepositoryFactory.communicationAPI('posts')
         created(){
             this.fetchProductAll()
             this.getRateProduct()
+            this.getWarehouse()
         },
         updated(){
             if(!this.value1[0] || !this.value1[1]){
                 this.allProduct = this.allProductBackup
             }
+        },
+        watch:{
+            // allProduct(){
+            //     const a = []
+            //     this.allProduct.forEach(item =>{
+            //         const date = new Date()
+            //         const newElem = {
+            //             idProduct: item.id,
+            //             time: date.toJSON(),
+            //             listImportGoods: [],
+            //             listExportGoods: []
+            //         }
+            //         a.push(newElem)
+            //     })
+            //     let b = [...this.allWarehouse, ...a]
+            //     this.allWarehouse.forEach(elem =>{
+            //         b = b.filter(item => item.idProduct !== elem.idProduct)
+            //     })
+            //     this.createWarehouse(a)
+            //     this.getWarehouse()
+            // }
         },
         methods: {
             onChangeDate(){
@@ -165,10 +188,10 @@ const PostsRepository = RepositoryFactory.communicationAPI('posts')
                     this.allProduct = a
                 }
             },
-            isShowFormAdd(){
+            isShowFormAdd(a){
                 this.isShowAddProduct = false
                 this.productEdit = []
-                this.fetchProductAll()
+                this.fetchProductAll(a)
             },
             addProduct(){
                 this.isShowAddProduct = true
@@ -193,10 +216,29 @@ const PostsRepository = RepositoryFactory.communicationAPI('posts')
                 console.log('selectedRowKeys changed: ', selectedRowKeys);
                 this.selectedRowKeys = selectedRowKeys;
             },
-            async fetchProductAll(){
+            async fetchProductAll(status){
                 const {data} = await PostsRepository.getProductDetail();
                 this.allProduct = data
                 this.allProductBackup = data
+                if(status == 'update'){
+                    const a = []
+                    data.forEach(item =>{
+                        const date = new Date()
+                        const newElem = {
+                            idProduct: item.id,
+                            time: date.toJSON(),
+                            listImportGoods: [],
+                            listExportGoods: []
+                        }
+                        a.push(newElem)
+                    })
+                    let b = [...this.allWarehouse, ...a]
+                    this.allWarehouse.forEach(elem =>{
+                        b = b.filter(item => item.idProduct !== elem.idProduct)
+                    })
+                    this.createWarehouse(b[0])
+                    this.getWarehouse()
+                }
             },
             async deleteProductId(id){
                 const {data} = await PostsRepository.deteleProductDetail(id);
@@ -209,7 +251,15 @@ const PostsRepository = RepositoryFactory.communicationAPI('posts')
             async getRateProduct(){
                 const {data} = await PostsRepository.getRateProduct();
                 this.allRateProduct = data
-            }
+            },
+            async createWarehouse(payload){
+                const {data} = await PostsRepository.createWarehouse(payload);
+                this.allWarehouse= data
+            },
+            async getWarehouse(){
+                const {data} = await PostsRepository.getWarehouse();
+                this.allWarehouse = data
+            },
             // start() {
             //     this.loading = true;
             //     // ajax request after empty completing

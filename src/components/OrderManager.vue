@@ -108,10 +108,12 @@
             </template>
         </a-table>
         <a-modal v-model="visible" title="Đơn hàng">
+            <!-- {{detailsProduct}}
+            {{amountBackup}} -->
             <div class="row" style="align-items: center">
                 <span class="col-2">Id đơn hàng: {{detailsProduct.id}}</span>
                 <span class="col-4">Trạng thái đơn hàng: {{detailsProduct.statusOrder == 'unconfirmed' ? 'Chưa xác nhận' : detailsProduct.statusOrder == 'confirmed' ? 'Đã xác nhận':'Đã giao'}}</span>
-                <a-button v-show="isAddProductOrder" type="primary" @click="isAddProductOrder = !isAddProductOrder">
+                <a-button v-show="isAddProductOrder && detailsProduct.statusOrder == 'unconfirmed'" type="primary" @click="isAddProductOrder = !isAddProductOrder">
                     Thêm hàng cho đơn này
                 </a-button>
             </div>
@@ -162,9 +164,9 @@
                             <a @click="() => cancel1(record)">Cancel</a>
                         </span>
                         <span v-else>
-                            <a :disabled="editingKey1 !== ''" @click="() => edit1(record)">Chỉnh sửa</a>
+                            <a :disabled="editingKey1 == '' && detailsProduct.statusOrder == 'unconfirmed' ? false : true" @click="() => edit1(record)">Chỉnh sửa</a>
                             <a-divider type="vertical" />
-                            <a @click="deleteProductOrder(record)">Xóa</a>
+                            <a :disabled="detailsProduct.statusOrder == 'unconfirmed' ? false : true" @click="deleteProductOrder(record)">Xóa</a>
                         </span>
                     </div>
                 </template>
@@ -305,6 +307,8 @@ const PostsRepository = RepositoryFactory.communicationAPI('posts')
                 isAddProductOrder: true,
                 idAddProductOrder: '',
                 amountAddProductOrder: '',
+                allWarehouse: [],
+                amountBackup: [],
 
                 // value1: [new Date(2019, 9, 8), new Date(2019, 9, 19)],
                 a: '',
@@ -327,6 +331,7 @@ const PostsRepository = RepositoryFactory.communicationAPI('posts')
             this.getProductDetail()
             this.getAccount()
             this.getOrder()
+            this.getWarehouse()
         },
         updated(){
             if(!this.value1[0] || !this.value1[1]){
@@ -423,6 +428,7 @@ const PostsRepository = RepositoryFactory.communicationAPI('posts')
                     delete target.editable1;
                     this.detailsProduct.listProductOrder = newData;
                 }
+                this.amountBackup = []
             },
             edit(record) {
                 const newData = [...this.allOrder];
@@ -436,6 +442,7 @@ const PostsRepository = RepositoryFactory.communicationAPI('posts')
             edit1(record) {
                 const newData = [...this.detailsProduct.listProductOrder];
                 const target = newData.filter(item => item.id === record.id)[0];
+                this.amountBackup = {...record}
                 this.editingKey1 = record.id;
                 if (target) {
                     target.editable1 = true;
@@ -448,31 +455,62 @@ const PostsRepository = RepositoryFactory.communicationAPI('posts')
                 const target = newData.filter(item => item.id == record.id)[0];
                 const targetCache = newCacheData.filter(item => item.id == record.id)[0];
                 if (target && targetCache) {
-                    delete target.editable1;
-                    this.detailsProduct.listProductOrder = newData;
-                    this.updateOrderId(this.detailsProduct.id, this.detailsProduct)
 
-                    this.productAll.forEach(item =>{
-                        target.forEach(elem =>{
-                            if(item.id == elem.idProduct){
-                            const newCount = item.product_amount - elem.amount
-                            const newQuantitySold = item.quantity_sold + elem.amount
-                            const newElem = {
-                                ...item,
-                                product_amount: newCount,
-                                quantity_sold: newQuantitySold
+                    this.productAll.forEach(item => {
+                        if(item.id == target.idProduct){
+                            if(item.product_amount >= target.amount){
+
+                                delete target.editable1;
+                                this.detailsProduct.listProductOrder = newData;
+                                target.time = new Date().toJSON(),
+                                this.updateOrderId(this.detailsProduct.id, this.detailsProduct)
+
+                                const newCount = item.product_amount + Number(this.amountBackup.amount) - Number(target.amount)
+                                const newQuantitySold = item.quantity_sold - Number(this.amountBackup.amount) + Number(target.amount)
+                                const newElem = {
+                                    ...item,
+                                    product_amount: newCount,
+                                    quantity_sold: newQuantitySold
+                                }
+                                this.updateProductDetail(item.id, newElem)
+                                
+                                this.allWarehouse.forEach(item => {
+                                    if(item.idProduct == target.idProduct && this.amountBackup.amount != target.amount){
+                                        const b = {
+                                            ...item,
+                                            listExportGoods: item.listExportGoods.concat({
+                                                id: [...Array(30)].map(() => Math.random().toString(36)[2]).join(''),
+                                                count: Number(target.amount) - Number(this.amountBackup.amount),
+                                                time: new Date()
+                                            })
+                                        }
+                                        this.updateWarehouseId(item.id, b)
+                                    }
+                                })
+
+                                this.getOrder()
+                                this.getWarehouse()
+                                this.getProductDetail()
+                                Object.assign(targetCache, target);
+                                this.cacheData1 = newCacheData;
+                                this.editingKey1 = '';
+                                this.amountBackup = []
                             }
-                            this.updateProductDetail(item.id, newElem)
+                            else{
+                                this.$notification['error']({
+                                    message: 'Xuất thất bại',
+                                    description:
+                                    'Kho không đủ hàng để xuất',
+                                    duration: 2,
+                                    style: {
+                                        top: `75px`,
+                                        marginBottom: '10px'
+                                    },
+                                });
                             }
-                        })
+                        }
                     })
-
-                    this.getOrder()
-                    Object.assign(targetCache, target);
-                    this.cacheData1 = newCacheData;
                 }
-                this.editingKey1 = '';
-                console.log(record.id);
             },
             saveAddProductOrder(){
                 if(this.amountAddProductOrder && this.idAddProductOrder){
@@ -480,18 +518,63 @@ const PostsRepository = RepositoryFactory.communicationAPI('posts')
                         "id": [...Array(30)].map(() => Math.random().toString(36)[2]).join(''),
                         "idProduct": Number(this.idAddProductOrder),
                         "amount": Number(this.amountAddProductOrder),
+                        "time": new Date().toJSON(),
                     }
                     const newData = [...this.detailsProduct.listProductOrder];
                     const newCacheData = [...this.cacheData1];
-                    this.detailsProduct.listProductOrder = newData.concat(a);
                     // this.detailsProduct = [...this.detailsProduct.listProductOrder]
-                    this.updateOrderId(this.detailsProduct.id, this.detailsProduct)
-                    this.getOrder()
-                    this.cacheData1 = newCacheData;
-                    this.editingKey1 = '';
-                    this.idAddProductOrder = ''
-                    this.amountAddProductOrder = ''
-                    this.isAddProductOrder = true
+                    this.productAll.forEach(item => {
+                        if(item.id == this.idAddProductOrder){
+                            if(item.product_amount >= this.amountAddProductOrder){
+                                this.detailsProduct.listProductOrder = newData.concat(a);
+                                const newCount = item.product_amount - Number(this.amountAddProductOrder)
+                                const newQuantitySold = item.quantity_sold + Number(this.amountAddProductOrder)
+                                const newElem = {
+                                    ...item,
+                                    product_amount: newCount,
+                                    quantity_sold: newQuantitySold
+                                }
+                                this.updateProductDetail(item.id, newElem)
+                                
+                                this.allWarehouse.forEach(item => {
+                                    if(item.idProduct == this.idAddProductOrder){
+                                        const b = {
+                                            ...item,
+                                            listExportGoods: item.listExportGoods.concat({
+                                                id: [...Array(30)].map(() => Math.random().toString(36)[2]).join(''),
+                                                count: Number(this.amountAddProductOrder),
+                                                time: new Date()
+                                            })
+                                        }
+                                        this.updateWarehouseId(item.id, b)
+                                    }
+                                })
+                                
+                                this.updateOrderId(this.detailsProduct.id, this.detailsProduct)
+                                this.getOrder()
+                                this.getWarehouse()
+                                this.getProductDetail()
+                                this.cacheData1 = newCacheData;
+                                this.editingKey1 = '';
+                                this.idAddProductOrder = ''
+                                this.amountAddProductOrder = ''
+                                this.isAddProductOrder = true
+                                this.amountBackup = []
+                            }
+                            else{
+                                this.$notification['error']({
+                                    message: 'Xuất thất bại',
+                                    description:
+                                    'Kho không đủ hàng để xuất',
+                                    duration: 2,
+                                    style: {
+                                        top: `75px`,
+                                        marginBottom: '10px'
+                                    },
+                                });
+                            }
+                        }
+                    })
                 }
                 else{
                     this.$notification['error']({
@@ -545,13 +628,21 @@ const PostsRepository = RepositoryFactory.communicationAPI('posts')
                 this.productAll = data
             },
             async updateProductDetail(id, payload){
-                const {data} = await PostsRepository.getProductDetail(id, payload);
+                const {data} = await PostsRepository.updateProductDetail(id, payload);
                 this.productAll = data
             },
             async getAccount(){
                 const {data} = await PostsRepository.getAccount();
                 this.accountAll = data
-            }
+            },
+            async getWarehouse(){
+                const {data} = await PostsRepository.getWarehouse();
+                this.allWarehouse = data
+            },
+            async updateWarehouseId(id, payload){
+                const {data} = await PostsRepository.updateWarehouseId(id, payload);
+                this.allWarehouse = data
+            },
         },
         filters: {
             filterPrice: function (data) {
@@ -576,5 +667,8 @@ const PostsRepository = RepositoryFactory.communicationAPI('posts')
 }
 .ant-table-thead > tr > th.ant-table-column-has-actions{
     padding: 5px !important;
+}
+a[disabled]{
+    color: rgb(197, 197, 197);;
 }
 </style>
