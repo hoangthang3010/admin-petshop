@@ -8,7 +8,7 @@
                 :icon="['fa', 'home']" 
                 color="white"
                 />
-            <span> Hello</span>
+            <span> Chào</span>
             <span> Thắng</span>
           </router-link>
       </div>
@@ -136,5 +136,21 @@ export default {
   height: 32px;
   background: rgba(255, 255, 255, 0.2);
   margin: 16px;
+}
+.logo{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  svg{
+    font-size: 25px;
+    margin-right: 10px;
+  }
+  .router-link-active{
+    span{
+      font-weight: bold;
+      font-size: 14px;
+      color: white;
+    }
+  }
 }
 </style>

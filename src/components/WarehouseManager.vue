@@ -1,17 +1,18 @@
 <template>
     <div>
-        <h3>Quản lý loại sản phẩm</h3>
+        <h3>Quản lý kho hàng</h3>
         <div class="toolbar-top" style="margin-top: 10px">
             <div>
-                <span>Có {{allWarehouse.length}} đánh giá</span>
+                <span>Có {{allWarehouse.length}} sản phẩm</span>
                 <a-divider type="vertical" />
                 <span>Đã chọn {{selectedRowKeys.length}}</span>
                 <a-divider type="vertical" />
                 <input type="button" @click="deleteRaceSelected" value="Xóa">
                 <a-divider type="vertical" />
-                <a-button type="primary" @click="updateWarehouse">
+                <input type="button" @click="updateWarehouse" value="Cập nhật">
+                <!-- <a-button type="primary" @click="updateWarehouse">
                     Cập nhật
-                </a-button>
+                </a-button> -->
             </div>
             <div>
                 Thời gian: 
@@ -107,6 +108,7 @@
             </template>
             <p>Đã xuất {{detailExport.listExportGoods ? detailExport.listExportGoods.length : '0'}} lần</p>
             <a-table
+                class="import-goods"
                 style="border-bottom: 1px solid #e8e8e8"
                 :columns="exportColumns"
                 :data-source="detailExport.listExportGoods"
@@ -115,21 +117,10 @@
             >
              <!-- && detailExport.listExportGoods.sort(sort.fn) -->
                 <template
-                    v-for="col in ['titleTypeDetail', 'name']"
-                    :slot="col"
-                    slot-scope="text, record"
+                    slot="count"
+                    slot-scope="text"
                 >
-                    <div :key="col">
-                        <a-input
-                        v-if="record.editable1"
-                        style="margin: -5px 0"
-                        :value="text"
-                        @change="e => handleChange1(e.target.value, record, col)"
-                        />
-                        <template v-else>
-                        {{ text }}
-                        </template>
-                    </div>
+                    {{text}} <a-icon :type="text > 0 ? 'arrow-up' : 'arrow-down'" :style="{marginLeft: '8px', fontSize: '11px', color: `${text > 0 ? 'green':'red'}` }"/>
                 </template>
             </a-table>
         </a-modal>
@@ -427,5 +418,12 @@ export default {
 </script>
 
 <style lang="scss">
-
+.import-goods{
+    .ant-table-tbody{
+        .ant-table-row-cell-break-word{
+            display: flex;
+            align-items: center;
+        }
+    }
+}
 </style>
