@@ -83,6 +83,14 @@
               </span>
           </router-link>
         </a-menu-item>
+        <a-menu-item key="10">
+          <router-link to="/posts">
+            <a-icon type="user" />
+              <span>
+                  Quản lý bài viết
+              </span>
+          </router-link>
+        </a-menu-item>
       </a-menu>
     </a-layout-sider>
     <a-layout>

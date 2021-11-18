@@ -2,27 +2,19 @@
     <div class="userlogin">
         <div class="userlogin__box">
             <h2 class="userlogin__box__title">Đăng nhập</h2>
-            <!-- <div> -->
             <div class="userlogin__box__main">
-                <!-- <p class="userlogin__box__main__title">Tên đăng nhập hoặc địa chỉ email *</p> -->
                 <input class="userlogin__box__main--input" 
                     v-model="username" 
                     @change="handleUsername" 
                     type="text"
                     placeholder="Email/Tên đăng nhập"
                 >
-                <!-- <p class="userlogin__box__main__title">Mật khẩu *</p> -->
                 <input class="userlogin__box__main--input" 
                     @change="handlePassword()" 
                     v-model="password" 
                     type="password"
                     placeholder="Mật khẩu"
                 >
-                <!-- </div> -->
-            </div>
-            <div class="userlogin__box__memo">
-                <input class="userlogin__box__memo--checkbox" type="checkbox" name="" id="">
-                <span class="userlogin__box__memo__title">Ghi nhớ mật khẩu</span>
             </div>
             <div class="userlogin__box__login">
                 <button 
@@ -31,31 +23,6 @@
                 >
                     Đăng nhập
                 </button>
-                
-                    <!-- @click="handleCreateAccountUser()" -->
-                <router-link to="/create_account_user">
-                    <button 
-                        class="userlogin__box__login--sign_up" 
-                    >
-                        Đăng kí
-                    </button>
-                </router-link>
-                <p class="userlogin__box__login__forget">Quên mật khẩu?</p>
-            </div>
-            <div class="userlogin__box__or">
-                <div class="userlogin__box__or__hr"></div>
-                <span class="userlogin__box__or__title">HOẶC</span>
-                <div class="userlogin__box__or__hr"></div>
-            </div>
-            <div class="userlogin__box__social">
-                <div class="userlogin__box__social__google" @click="loginGoogle">
-                    <img class="userlogin__box__social__google__image" :src="logoG" alt="">
-                    <span class="userlogin__box__social__google__title">Google</span>
-                </div>
-                <div class="userlogin__box__social__facebook" @click="loginFacebook">
-                    <img class="userlogin__box__social__facebook__image" :src="logoF" alt="">
-                    <span class="userlogin__box__social__facebook__title">Facebook</span>
-                </div>
             </div>
         </div>
     </div>
@@ -89,14 +56,14 @@ export default {
         },
         handlePassword(){console.log(this.password);
         },
+        //  && this.role == 'admin'
         handleLogin(){
             for(let i=0; i<this.users.length; i++){
-                if((this.users[i].username == this.username || this.users[i].email == this.username) && this.users[i].password == this.password){
+                if((this.users[i].username == this.username || this.users[i].email == this.username) && this.users[i].password == this.password && this.users[i].role == 'admin'){
                     return (
-                        this.$bus.emit('increaseCounter', this.users[i].fullname),
+                        this.$bus.emit('idUser', this.users[i].id),
                         this.checkUser = i,
-                        this.isShowLogin ? this.$router.push("") : this.$router.push("/info_user"),
-                        this.$emit('isShowLogin'),
+                        this.$router.push("/"),
                         this.$notification['success']({
                             message: 'Đăng nhập thành công',
                             description:
@@ -110,36 +77,6 @@ export default {
                         sessionStorage.setItem('id', this.users[i].id)
                     )
                 }
-                // else if((this.users[i].username == this.username || this.users[i].email == this.username) && this.users[i].password !== this.password){
-                //     return( 
-                //         this.$notification['error']({
-                //             message: 'Mật khẩu sai',
-                //             description:
-                //             'Vui lòng nhập lại mật khẩu.',
-                //             duration: 2,
-                //             style: {
-                //                 marginTop: `75px`,
-                //                 marginBottom: '-50px'
-                //             },
-                //         }),
-                //         this.checkUser = i
-                //     )
-                // }
-                // else if((this.users[i].username !== this.username || this.users[i].email !== this.username) && this.users[i].password === this.password){
-                //     return(
-                //         this.$notification['error']({
-                //             message: 'Tên đăng nhập/email hoặc mật khẩu sai',
-                //             description:
-                //             '',
-                //             duration: 2,
-                //             style: {
-                //                 marginTop: `75px`,
-                //                 marginBottom: '-50px'
-                //             },
-                //         }),
-                //         this.checkUser = i
-                //     )
-                // }
                 else this.checkUser = ''
             }
             if (this.checkUser === '') {
@@ -206,13 +143,3 @@ export default {
     },
 }
 </script>
-
-
-                        // sessionStorage.setItem('username',this.users[i].username),
-                        // sessionStorage.setItem('role',this.users[i].role),
-                        // sessionStorage.setItem('fullname',this.users[i].fullname),
-                        // sessionStorage.setItem('email',this.users[i].email),
-                        // sessionStorage.setItem('phonenumber',this.users[i].phonenumber),
-                        // sessionStorage.setItem('birthday',this.users[i].birthday),
-                        // sessionStorage.setItem('old',this.users[i].old),
-                        // sessionStorage.setItem('sex',this.users[i].sex)

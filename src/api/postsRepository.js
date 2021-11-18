@@ -9,6 +9,7 @@ const race = "/race"
 const slide = "/slides"
 const typeProduct = "/productAll"
 const warehouse = "/warehouse"
+const news = "/news"
 export default {
     getAccount(){
         return Repository.get(`${account}`);
@@ -22,7 +23,7 @@ export default {
     updateAccount(accountId, payload){
         return Repository.put(`${account}/${accountId}`, payload)
     },
-    deteleAccount(accountId){
+    deleteAccount(accountId){
         return Repository.delete(`${account}/${accountId}`)
     },
     getProductDetail(){
@@ -37,7 +38,7 @@ export default {
     updateProductDetail(productDetailId, payload){
         return Repository.put(`${productDetail}/${productDetailId}`, payload)
     },
-    deteleProductDetail(productDetailId){
+    deleteProductDetail(productDetailId){
         return Repository.delete(`${productDetail}/${productDetailId}`)
     },
     getRateProduct(){
@@ -59,7 +60,7 @@ export default {
     createCommentProduct(payload){
         return Repository.post( `${commentProduct}`, payload)
     },
-    deteleCommentProductId(commentProductId){
+    deleteCommentProductId(commentProductId){
         return Repository.delete(`${commentProduct}/${commentProductId}`)
     },
     updateCommentProductId(commentProductId, payload){
@@ -71,7 +72,7 @@ export default {
     createOrder(payload){
         return Repository.post( `${orderProduct}`, payload)
     },
-    deteleOrder(idOrderProduct){
+    deleteOrder(idOrderProduct){
         return Repository.delete(`${orderProduct}/${idOrderProduct}`)
     },
     updateOrderId(idOrderProduct, payload){
@@ -83,7 +84,7 @@ export default {
     createRace(payload){
         return Repository.post( `${race}`, payload)
     },
-    deteleRace(idRace){
+    deleteRace(idRace){
         return Repository.delete(`${race}/${idRace}`)
     },
     updateRaceId(idRace, payload){
@@ -95,7 +96,7 @@ export default {
     createSlide(payload){
         return Repository.post( `${slide}`, payload)
     },
-    deteleSlide(idSlide){
+    deleteSlide(idSlide){
         return Repository.delete(`${slide}/${idSlide}`)
     },
     updateSlideId(idSlide, payload){
@@ -107,7 +108,7 @@ export default {
     createTypeProduct(payload){
         return Repository.post( `${typeProduct}`, payload)
     },
-    deteleTypeProduct(idTypeProduct){
+    deleteTypeProduct(idTypeProduct){
         return Repository.delete(`${typeProduct}/${idTypeProduct}`)
     },
     updateTypeProductId(idTypeProduct, payload){
@@ -119,11 +120,23 @@ export default {
     createWarehouse(payload){
         return Repository.post( `${warehouse}`, payload)
     },
-    deteleWarehouse(idTypeProduct){
+    deleteWarehouse(idTypeProduct){
         return Repository.delete(`${warehouse}/${idTypeProduct}`)
     },
     updateWarehouseId(idTypeProduct, payload){
         return Repository.put(`${warehouse}/${idTypeProduct}`, payload)
+    },
+    getNews(){
+        return Repository.get( `${news}`)
+    }, 
+    createNews(payload){
+        return Repository.post( `${news}`, payload)
+    },
+    deleteNews(idTypeProduct){
+        return Repository.delete(`${news}/${idTypeProduct}`)
+    },
+    updateNewsId(idTypeProduct, payload){
+        return Repository.put(`${news}/${idTypeProduct}`, payload)
     },
 
 }

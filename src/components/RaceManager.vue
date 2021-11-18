@@ -66,7 +66,7 @@
                         <!-- <a @click="() => saveEdit(record)">Save</a> -->
                         <a :disabled="editingKey !== ''" @click="() => edit(record)">Chỉnh sửa</a>
                         <a-divider type="vertical" />
-                        <a @click="deleteRace(record, key)">Xóa</a>
+                        <a @click="onDeleteRace(record, key)">Xóa</a>
                     </span>
                 </div>
             </template>
@@ -184,15 +184,15 @@ export default {
                 this.allRace = newData;
             }
         },
-        deleteRace(item){
-            this.deteleRace(item.id)
+        onDeleteRace(item){
+            this.deleteRace(item.id)
             this.getRace()
         },
         deleteRaceSelected(){
             this.allRace.forEach((item, key) =>{
                 this.selectedRowKeys.forEach(elem =>{
                     if(key == elem){
-                        this.deteleRace(item.id)
+                        this.deleteRace(item.id)
                     }
                 })
             })
@@ -280,8 +280,8 @@ export default {
             this.allRaceBackup = data
             this.cacheData = data.map(item => ({ ...item }));
         },
-        async deteleRace(id){
-            const {data} = await PostsRepository.deteleRace(id);
+        async deleteRace(id){
+            const {data} = await PostsRepository.deleteRace(id);
             this.allRace = data
         },
         async updateRaceId(id, payload){

@@ -369,7 +369,7 @@ export default {
             this.allWarehouse.forEach((item, key) =>{
                 this.selectedRowKeys.forEach(elem =>{
                     if(key == elem){
-                        this.deteleWarehouse(item.id)
+                        this.deleteWarehouse(item.id)
                     }
                 })
             })
@@ -393,8 +393,8 @@ export default {
             this.allWarehouseBackup = data
             this.cacheData = data.map(item => ({ ...item }));
         },
-        async deteleWarehouse(id){
-            const {data} = await PostsRepository.deteleWarehouse(id);
+        async deleteWarehouse(id){
+            const {data} = await PostsRepository.deleteWarehouse(id);
             this.allWarehouse = data
         },
         async updateWarehouseId(id, payload){

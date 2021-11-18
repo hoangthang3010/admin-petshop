@@ -100,7 +100,7 @@
                         <div>
                             <a :disabled="editingKey !== ''" @click="() => edit(record)">Chỉnh sửa</a>
                             <a-divider type="vertical" />
-                            <a @click="deleteOrder(record, key)">Xóa</a>
+                            <a @click="onDeleteOrder(record, key)">Xóa</a>
                         </div>
                         <a @click="moreCommentProduct(record)">Chi tiết</a>
                     </span>
@@ -352,7 +352,7 @@ const PostsRepository = RepositoryFactory.communicationAPI('posts')
                         if(key == elem){
                             // const newElem = {...item}
                             // console.log(newElem);
-                            this.deteleOrder(item.id)
+                            this.deleteOrder(item.id)
                         }
                     })
                 })
@@ -589,7 +589,7 @@ const PostsRepository = RepositoryFactory.communicationAPI('posts')
                     });
                 }
             },
-            deleteOrder(item){
+            onDeleteOrder(item){
                 this.updateOrderId(item.id)
                 this.getOrder()
             },
@@ -619,8 +619,8 @@ const PostsRepository = RepositoryFactory.communicationAPI('posts')
                 const {data} = await PostsRepository.updateOrderId(id, payload);
                 this.allOrder = data
             },
-            async deteleOrder(id){
-                const {data} = await PostsRepository.deteleOrder(id);
+            async deleteOrder(id){
+                const {data} = await PostsRepository.deleteOrder(id);
                 this.allOrder = data
             },
             async getProductDetail(){

@@ -66,7 +66,7 @@
                         <!-- <a @click="() => saveEdit(record)">Save</a> -->
                         <a :disabled="editingKey !== ''" @click="() => edit(record)">Chỉnh sửa</a>
                         <a-divider type="vertical" />
-                        <a @click="deleteRace(record, key)">Xóa</a>
+                        <a @click="onDeleteRace(record, key)">Xóa</a>
                         <a-divider type="vertical" />
                         <a @click="moreTypeProduct(record)">Chi tiết</a>
                     </span>
@@ -319,15 +319,15 @@ export default {
                 this.editTypeProduct.type = newData;
             }
         },
-        deleteRace(item){
-            this.deteleTypeProduct(item.id)
+        onDeleteRace(item){
+            this.deleteTypeProduct(item.id)
             this.getTypeProduct()
         },
         deleteRaceSelected(){
             this.allTypeProduct.forEach((item, key) =>{
                 this.selectedRowKeys.forEach(elem =>{
                     if(key == elem){
-                        this.deteleTypeProduct(item.id)
+                        this.deleteTypeProduct(item.id)
                     }
                 })
             })
@@ -418,8 +418,8 @@ export default {
             this.allTypeProductBackup = data
             this.cacheData = data.map(item => ({ ...item }));
         },
-        async deteleTypeProduct(id){
-            const {data} = await PostsRepository.deteleTypeProduct(id);
+        async deleteTypeProduct(id){
+            const {data} = await PostsRepository.deleteTypeProduct(id);
             this.allTypeProduct = data
         },
         async updateTypeProductId(id, payload){

@@ -153,7 +153,7 @@
                     <span v-else>
                         <a :disabled="editingKey !== ''" @click="() => edit(record)">Chỉnh sửa</a>
                         <a-divider type="vertical" />
-                        <a @click="deleteAccount(record)">Xóa</a>
+                        <a @click="onDeleteAccount(record)">Xóa</a>
                         <!-- <a-divider type="vertical" />
                         <a @click="moreCommentProduct(record)">Chi tiết</a> -->
                     </span>
@@ -491,8 +491,8 @@ export default {
             const target = newData.filter(item => item.id == record.id)[0];
             target.avatar = "https://www.unmc.edu/cihc/_images/faculty/default.jpg"
         },
-        deleteAccount(item){
-            this.deteleAccount(item.id)
+        onDeleteAccount(item){
+            this.deleteAccount(item.id)
             this.getAccount()
         },
         onSelectChange(selectedRowKeys) {
@@ -604,8 +604,8 @@ export default {
             this.allAccount = data
         // this.cacheData = data.map(item => ({ ...item }));
         },
-        async deteleAccount(id){
-            const {data} = await PostsRepository.deteleAccount(id);
+        async deleteAccount(id){
+            const {data} = await PostsRepository.deleteAccount(id);
             this.allAccount = data
         },
         async getAccount(){

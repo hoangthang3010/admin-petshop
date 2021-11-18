@@ -180,7 +180,7 @@ const PostsRepository = RepositoryFactory.communicationAPI('posts')
                 this.listComment = this.allComment.slice(this.allComment.length-5)
             },
             onDeleteComment(id){
-                this.deteleCommentProductId(id)
+                this.deleteCommentProductId(id)
                 this.$emit('handleDeleteComment');
             },
             onEditComment(id, content){
@@ -221,8 +221,8 @@ const PostsRepository = RepositoryFactory.communicationAPI('posts')
                 this.comments = data
                 // this.$forceUpdate()
             },
-            async deteleCommentProductId(id){
-                const {data} = await PostsRepository.deteleCommentProductId(id);
+            async deleteCommentProductId(id){
+                const {data} = await PostsRepository.deleteCommentProductId(id);
                 this.comments = data
             },
             async updateCommentProductId(id, content){

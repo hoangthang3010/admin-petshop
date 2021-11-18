@@ -119,7 +119,7 @@
                         <!-- <a @click="() => saveEdit(record)">Save</a> -->
                         <a :disabled="editingKey !== ''" @click="() => edit(record)">Chỉnh sửa</a>
                         <a-divider type="vertical" />
-                        <a @click="deleteSlide(record, key)">Xóa</a>
+                        <a @click="onDeleteSlide(record, key)">Xóa</a>
                     </span>
                 </div>
             </template>
@@ -235,15 +235,15 @@ export default {
                 this.allSlide = newData;
             }
         },
-        deleteSlide(item){
-            this.deteleSlide(item.id)
+        onDeleteSlide(item){
+            this.deleteSlide(item.id)
             this.getSlide()
         },
         deleteRaceSelected(){
             this.allSlide.forEach((item, key) =>{
                 this.selectedRowKeys.forEach(elem =>{
                     if(key == elem){
-                        this.deteleSlide(item.id)
+                        this.deleteSlide(item.id)
                     }
                 })
             })
@@ -393,8 +393,8 @@ export default {
             this.allSlideBackup = data
             this.cacheData = data.map(item => ({ ...item }));
         },
-        async deteleSlide(id){
-            const {data} = await PostsRepository.deteleSlide(id);
+        async deleteSlide(id){
+            const {data} = await PostsRepository.deleteSlide(id);
             this.allSlide = data
         },
         async updateSlideId(id, payload){

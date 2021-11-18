@@ -241,7 +241,7 @@ const PostsRepository = RepositoryFactory.communicationAPI('posts')
                 }
             },
             async deleteProductId(id){
-                const {data} = await PostsRepository.deteleProductDetail(id);
+                const {data} = await PostsRepository.deleteProductDetail(id);
                 this.allProduct = data
             },
             async deleteRateProduct(idRate){
@@ -311,6 +311,7 @@ const PostsRepository = RepositoryFactory.communicationAPI('posts')
             left: 0;
             z-index: 100;
         }
+        .add-news,
         .add-product{
             position: fixed;
             z-index: 100;

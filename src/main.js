@@ -27,6 +27,11 @@ import firebase from "firebase";
 import JwPagination from 'jw-vue-pagination';
 // import VueFbCustomerChat from 'vue-fb-customer-chat'
 import VueApexCharts from 'vue-apexcharts'
+import CKEditor from '@ckeditor/ckeditor5-vue2';
+import tinymce from 'vue-tinymce-editor'
+Vue.component('tinymce', tinymce)
+
+Vue.use( CKEditor );
 Vue.use(VueApexCharts)
 Vue.config.productionTip = false;
 

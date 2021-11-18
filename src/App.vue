@@ -1,9 +1,10 @@
 <template>
   <div id="app">
-    <NavMenu>
+    <NavMenu v-if="id">
       <BackToTop/>
       <!-- {{children}} -->
     </NavMenu>
+    <div v-else><Login/></div>
   </div>
 </template>
 
@@ -13,22 +14,28 @@ import NavMenu from './layout/NavBar.vue'
 // import HeaderMenu from './layout/HeaderMenu.vue'
 import '../src/scss/App.scss'
 import BackToTop from './components/BackToTop.vue'
+import Login from './components/Login.vue'
 import { mapGetters, mapActions } from "vuex";
 export default {
   name: 'App',
   data() {
     return {
-      role: this.$route.params.admin
+      role: this.$route.params.admin,
+      id: sessionStorage.getItem('id')
     }
   },
   components: {
     NavMenu,
     // Footer,
     // HeaderMenu,
-    BackToTop
+    BackToTop,
+    Login
   },
   created(){
     console.log(this.role);
+    this.$bus.on('idUser', value => {
+                this.id = value
+            })
   },
   // created(){
   //   window.scrollTo(0,0)

@@ -257,7 +257,7 @@ export default {
             this.allCommentProduct.forEach((item, key) =>{
                 this.selectedRowKeys.forEach(elem =>{
                     if(key == elem){
-                        this.deteleCommentProductId(item.id)
+                        this.deleteCommentProductId(item.id)
                     }
                 })
             })
@@ -478,7 +478,7 @@ export default {
             }
         },
         deleteCommentProduct(item){
-            this.deteleCommentProductId(item.id)
+            this.deleteCommentProductId(item.id)
             this.getCommentProduct()
         },
         onSelectChange(selectedRowKeys) {
@@ -495,8 +495,8 @@ export default {
             this.allCommentProductBackup = data
             this.cacheData = data.map(item => ({ ...item }));
         },
-        async deteleCommentProductId(id){
-            const {data} = await PostsRepository.deteleCommentProductId(id);
+        async deleteCommentProductId(id){
+            const {data} = await PostsRepository.deleteCommentProductId(id);
             this.allCommentProduct = data
         },
         async updateCommentProductId(id, payload){
